@@ -1,3 +1,3 @@
 # DuoApp
 
-Dit wordt de DuoApp van Mark en Max!
+Dit wordt de DuoApp van Mark Hendriks en Max Altena!
