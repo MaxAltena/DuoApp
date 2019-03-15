@@ -1,11 +1,14 @@
 package com.maxaltena.socialkit;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
@@ -74,6 +77,20 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
+    }
+    @Override
+    //Checks user activity in user sign in
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RC_SIGN_IN){
+            if(resultCode == RESULT_OK){
+                Toast.makeText(MainActivity.this, "Welcome , to SocialKit!", Toast.LENGTH_SHORT).show();
+            }
+            else if(resultCode == RESULT_CANCELED){
+                Toast.makeText(MainActivity.this, "Bye :(", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
     //logout thing
     @Override
