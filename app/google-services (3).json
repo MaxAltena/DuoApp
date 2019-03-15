@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "445949469151",
+    "firebase_url": "https://socialkit-pro.firebaseio.com",
+    "project_id": "socialkit-pro",
+    "storage_bucket": "socialkit-pro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445949469151:android:5a62f6693d83cd54",
+        "android_client_info": {
+          "package_name": "com.maxaltena.socialkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "445949469151-nrk585u56m87flatefobncbo6qb83rvf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.maxaltena.socialkit",
+            "certificate_hash": "ead3f59ee7a63fbdfe00125e9944fac945b0ddb9"
+          }
+        },
+        {
+          "client_id": "445949469151-9vr45qi31ui4b58a4j2639hfa20096it.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHxzynrYwi1gVj5_kkK10l8UUwy-dVBqw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445949469151-9vr45qi31ui4b58a4j2639hfa20096it.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">SocialKit</string>
     <string name="sign_out">Sign Out</string>
+
+    <string name="submit">Submit</string>
+
+    <string name="socialMediaUsername">john.doe</string>
+    <string name="socialMediaName">Facebook</string>
+    <string name="socialMediaLink">https://www.facebook.com/john.doe</string>
 </resources>
