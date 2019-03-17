@@ -44,7 +44,6 @@ public class AddSocialsActivity extends AppCompatActivity {
 
     public DocumentReference setDocumentReference(){
         DocumentReference DocumentRef = FirebaseFirestore.getInstance().collection("users").document(UID).collection("socials").document();
-\
         return DocumentRef;
     }
     public void saveNewSocial(View view){
@@ -53,12 +52,13 @@ public class AddSocialsActivity extends AppCompatActivity {
         EditText socialMediaUsernameView = (EditText) findViewById(R.id.editTextUsername);
         String socialMediaPlatformText = socialMediaPlatformView.getText().toString();
         String socialMediaUsernameText = socialMediaUsernameView.getText().toString();
+        DocumentReference platform = FirebaseFirestore.getInstance().collection("platforms").document(socialMediaPlatformText.toLowerCase());
 
         mDocRef = setDocumentReference();
 
         if(socialMediaPlatformText.isEmpty() || socialMediaUsernameText.isEmpty()){return;}
         Map<String, Object> dataToSave = new HashMap<String, Object>();
-        dataToSave.put(SOCIAL_MEDIA_PLATFORM, socialMediaPlatformText);
+        dataToSave.put(SOCIAL_MEDIA_PLATFORM, platform);
         dataToSave.put(SOCIAL_MEDIA_USERNAME, socialMediaUsernameText);
 
         mDocRef.set(dataToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
