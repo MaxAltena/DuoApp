@@ -33,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     // final vars
     public static final int RC_SIGN_IN = 1;
-    public static final String SOCIAL_MEDIA_IMAGELINK = "Imagelink";
-    public static final String SOCIAL_MEDIA_NAME = "Name";
-    public static final String SOCIAL_MEDIA_LINK = "Link";
+    public static final String SOCIAL_MEDIA_IMAGELINK = "image";
+    public static final String SOCIAL_MEDIA_NAME = "name";
+    public static final String SOCIAL_MEDIA_LINK = "link";
     public static final String TAG = "Saved";
 
     //More vars
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public DocumentReference setDocumentReference(String name){
 
-        DocumentReference DocumentRef = FirebaseFirestore.getInstance().document("Platforms/" + name);
+        DocumentReference DocumentRef = FirebaseFirestore.getInstance().document("platforms/" + name);
         return DocumentRef;
     }
 
