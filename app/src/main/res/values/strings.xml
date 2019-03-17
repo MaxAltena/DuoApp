@@ -6,5 +6,7 @@
 
     <string name="socialMediaUsername">john.doe</string>
     <string name="socialMediaName">Facebook</string>
+    <string name="socialMediaImagelink">https://www.facebook.com/john.doe</string>
     <string name="socialMediaLink">https://www.facebook.com/john.doe</string>
+
 </resources>

@@ -12,19 +12,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="212dp"
+        android:layout_marginTop="220dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
         android:hint="@string/socialMediaName"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.43"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/socialMediaUsername"
+        android:id="@+id/socialMediaImagelink"
         android:layout_width="wrap_content"
         android:layout_height="49dp"
         android:layout_marginStart="8dp"
@@ -33,10 +32,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
-        android:hint="@string/socialMediaUsername"
+        android:hint="@string/socialMediaImagelink"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.439"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/socialMediaName" />
 
@@ -46,16 +44,15 @@
         android:layout_height="42dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:ems="10"
         android:hint="@string/socialMediaLink"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.439"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/socialMediaUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/socialMediaImagelink" />
 
     <Button
         android:id="@+id/socialMediaLinkSubmit"

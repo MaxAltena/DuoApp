@@ -33,19 +33,21 @@ public class MainActivity extends AppCompatActivity {
 
     // final vars
     public static final int RC_SIGN_IN = 1;
-    public static final String SOCIAL_MEDIA_USERNAME = "SocialMediaUsername";
-    public static final String SOCIAL_MEDIA_NAME = "SocialMediaName";
-    public static final String SOCIAL_MEDIA_LINK = "SocialMediaLink";
+    public static final String SOCIAL_MEDIA_IMAGELINK = "Imagelink";
+    public static final String SOCIAL_MEDIA_NAME = "Name";
+    public static final String SOCIAL_MEDIA_LINK = "Link";
     public static final String TAG = "Saved";
 
-    // Global firebase
-    private DocumentReference mDocRef = FirebaseFirestore.getInstance().document("SocialMedia/social");
+    //More vars
+    public String socialMediaNameText;
+
+
 
     //auth
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     //db
-
+    private DocumentReference mDocRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +86,28 @@ public class MainActivity extends AppCompatActivity {
         };
 
     }
+    public DocumentReference setDocumentReference(String name){
+
+        DocumentReference DocumentRef = FirebaseFirestore.getInstance().document("Platforms/" + name);
+        return DocumentRef;
+    }
+
     public void saveNewEntry(View view){
+
         EditText socialMediaLinkView = (EditText) findViewById(R.id.socialMediaLink);
         EditText socialMediaNameView = (EditText) findViewById(R.id.socialMediaName);
-        EditText socialMediaUsernameView = (EditText) findViewById(R.id.socialMediaUsername);
+        EditText socialMediaImagelinkView = (EditText) findViewById(R.id.socialMediaImagelink);
         String socialMediaLinkText = socialMediaLinkView.getText().toString();
         String socialMediaNameText = socialMediaNameView.getText().toString();
-        String socialMediaUsernameText = socialMediaUsernameView.getText().toString();
+        String socialMediaImagelinkText = socialMediaImagelinkView.getText().toString();
 
-        if(socialMediaLinkText.isEmpty() || socialMediaNameText.isEmpty() || socialMediaUsernameText.isEmpty()){return;}
+        mDocRef = setDocumentReference(socialMediaNameText);
+
+        if(socialMediaLinkText.isEmpty() || socialMediaNameText.isEmpty() || socialMediaImagelinkText.isEmpty()){return;}
         Map<String, Object> dataToSave = new HashMap<String, Object>();
         dataToSave.put(SOCIAL_MEDIA_LINK, socialMediaLinkText);
         dataToSave.put(SOCIAL_MEDIA_NAME, socialMediaNameText);
-        dataToSave.put(SOCIAL_MEDIA_USERNAME, socialMediaUsernameText);
+        dataToSave.put(SOCIAL_MEDIA_IMAGELINK, socialMediaImagelinkText);
 
         mDocRef.set(dataToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
