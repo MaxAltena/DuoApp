@@ -32,6 +32,7 @@ public class AddPlatformActivity extends AppCompatActivity {
     public static final String SOCIAL_MEDIA_NAME = "name";
     public static final String SOCIAL_MEDIA_LINK = "link";
     public static final String TAG = "Saved";
+    public  TextView allText;
 
     //db
     private DocumentReference mWriteDocRef;
@@ -43,7 +44,7 @@ public class AddPlatformActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_platform);
 
         //View vars
-        TextView allText = (TextView) findViewById(R.id.textViewAll);
+        allText = (TextView) findViewById(R.id.textViewAll);
 
 
         getPlatforms();
@@ -51,17 +52,23 @@ public class AddPlatformActivity extends AppCompatActivity {
 
     public void getPlatforms(){
         getReadDocRefence()
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG,  document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
                         }
+
+                        List<String> platforms = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : value) {
+                            if (doc.get("name") != null) {
+                                platforms.add(doc.getString("name"));
+                            }
+                        }
+                        Log.d(TAG, "Hierzo! " + platforms);
+                        allText.setText(platforms.toString());
                     }
                 });
 
