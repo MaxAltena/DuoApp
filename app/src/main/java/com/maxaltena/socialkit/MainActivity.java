@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     //More vars
     public String loggedInUserUid;
 
-
     //auth
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
