@@ -8,5 +8,8 @@
     <string name="socialMediaName">Facebook</string>
     <string name="socialMediaImagelink">https://www.facebook.com/john.doe</string>
     <string name="socialMediaLink">https://www.facebook.com/john.doe</string>
+    <string name="platformName">Facebook</string>
+    <string name="linkWhitoutUsername">https://www.facebook.com/</string>
+    <string name="imageLink">Place where image is stored</string>
 
 </resources>

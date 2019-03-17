@@ -33,33 +33,22 @@ public class MainActivity extends AppCompatActivity {
 
     // final vars
     public static final int RC_SIGN_IN = 1;
-    public static final String SOCIAL_MEDIA_IMAGELINK = "image";
-    public static final String SOCIAL_MEDIA_NAME = "name";
-    public static final String SOCIAL_MEDIA_LINK = "link";
-    public static final String TAG = "Saved";
 
     //More vars
-    public String socialMediaNameText;
     public String loggedInUserUid;
 
 
     //auth
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-    //db
-    private DocumentReference mDocRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
-
-
 
         //Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -88,41 +77,9 @@ public class MainActivity extends AppCompatActivity {
         };
 
     }
-    public DocumentReference setDocumentReference(String name){
 
-        DocumentReference DocumentRef = FirebaseFirestore.getInstance().document("platforms/" + name);
-        return DocumentRef;
-    }
 
-    public void saveNewEntry(View view){
 
-        EditText socialMediaLinkView = (EditText) findViewById(R.id.socialMediaLink);
-        EditText socialMediaNameView = (EditText) findViewById(R.id.socialMediaName);
-        EditText socialMediaImagelinkView = (EditText) findViewById(R.id.socialMediaImagelink);
-        String socialMediaLinkText = socialMediaLinkView.getText().toString();
-        String socialMediaNameText = socialMediaNameView.getText().toString();
-        String socialMediaImagelinkText = socialMediaImagelinkView.getText().toString();
-
-        mDocRef = setDocumentReference(socialMediaNameText);
-
-        if(socialMediaLinkText.isEmpty() || socialMediaNameText.isEmpty() || socialMediaImagelinkText.isEmpty()){return;}
-        Map<String, Object> dataToSave = new HashMap<String, Object>();
-        dataToSave.put(SOCIAL_MEDIA_LINK, socialMediaLinkText);
-        dataToSave.put(SOCIAL_MEDIA_NAME, socialMediaNameText);
-        dataToSave.put(SOCIAL_MEDIA_IMAGELINK, socialMediaImagelinkText);
-
-        mDocRef.set(dataToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Document saved?");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Document saving failed", e);
-            }
-        });
-    }
     //Auth stuff
     @Override
     protected void onPause(){
@@ -147,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_SIGN_IN){
             if(resultCode == RESULT_OK){
-                Toast.makeText(MainActivity.this, "Welcome , to SocialKit!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Welcome, to SocialKit!", Toast.LENGTH_SHORT).show();
             }
             else if(resultCode == RESULT_CANCELED){
                 Toast.makeText(MainActivity.this, "Bye :(", Toast.LENGTH_SHORT).show();
@@ -168,10 +125,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     //Change view
-    /** Called when the user taps the Send button */
     public void StartAddSocialActivity(View view) {
         Intent intent = new Intent(this, AddSocialsActivity.class);
         intent.putExtra("userUID", loggedInUserUid);
+        startActivity(intent);
+    }
+    //Change view
+    public void StartAddPlatformActivity(View view) {
+        Intent intent = new Intent(this, AddPlatformActivity.class);
         startActivity(intent);
     }
 }
