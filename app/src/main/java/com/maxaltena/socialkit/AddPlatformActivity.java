@@ -54,7 +54,7 @@ public class AddPlatformActivity extends AppCompatActivity {
         mDocRef.set(dataToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Document saved?");
+                Log.d(TAG, "Document probably saved to " + mDocRef.getPath());
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
