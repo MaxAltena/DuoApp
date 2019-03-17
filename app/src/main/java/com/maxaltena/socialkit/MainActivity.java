@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     //More vars
     public String socialMediaNameText;
-
+    public String loggedInUserUid;
 
 
     //auth
@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 //Get user
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+                loggedInUserUid = user.getUid();
+
                 //Check if user is logged in
                 if(user!= null){
                     //user is signed in
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    //Auth stuff
     @Override
     protected void onPause(){
         super.onPause();
@@ -164,5 +167,11 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    //Change view
+    /** Called when the user taps the Send button */
+    public void StartAddSocialActivity(View view) {
+        Intent intent = new Intent(this, AddSocialsActivity.class);
+        intent.putExtra("userUID", loggedInUserUid);
+        startActivity(intent);
+    }
 }
