@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -96,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Get socials stuff
     public void getSocials(){
-        getSocialsDocRefence()
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        CollectionReference readDocumentRef = FirebaseFirestore.getInstance().collection("users").document(loggedInUserUid).collection("socials");
+        readDocumentRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value,
                                         @Nullable FirebaseFirestoreException e) {
@@ -109,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot doc : value) {
                             if (doc.get("platform") != null && doc.get("username") != null) {
                                 ArrayList<String> social = new ArrayList<String>();
-                                social.add(doc.getDocumentReference("platform").getPath());
+                                String platformRef = doc.getDocumentReference("platform").getPath();
+                                social.add(platformRef);
+                                getPlatforms(platformRef);
                                 social.add(doc.getString("username"));
                                 allSocials.add(social);
                             }
@@ -120,10 +123,32 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
+    //Get platforms stuff
+    public void getPlatforms(String ref){
+        String[] parts = ref.split("/");
+        String collection = parts[0];
+        String document = parts[1];
+        DocumentReference readDocumentRef = FirebaseFirestore.getInstance().collection(collection).document(document);
+        readDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
 
-    public CollectionReference getSocialsDocRefence(){
-        CollectionReference readDocumentRef = FirebaseFirestore.getInstance().collection("users").document(loggedInUserUid).collection("socials");
-        return readDocumentRef;
+                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                        ? "Local" : "Server";
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(TAG, source + " dataaaaaaaaaaaaa: " + snapshot.getData());
+                } else {
+                    Log.d(TAG, source + " data: null");
+                }
+            }
+        });
+
     }
 
     //Auth stuff
