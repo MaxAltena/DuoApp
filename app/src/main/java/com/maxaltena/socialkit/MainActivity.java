@@ -22,17 +22,26 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     // final vars
     public static final int RC_SIGN_IN = 1;
+    public static final String TAG = "Saved";
 
     //More vars
     public String loggedInUserUid;
@@ -40,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
     //auth
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+
+    //User vars
+    ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +69,14 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 //Get user
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                loggedInUserUid = user.getUid();
+
 
                 //Check if user is logged in
                 if(user!= null){
                     //user is signed in
+                    loggedInUserUid = user.getUid();
+                    getSocials();
+
                 } else {
                     //user is not signed in
                     startActivityForResult(
@@ -77,7 +94,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Get socials stuff
+    public void getSocials(){
+        getSocialsDocRefence()
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
 
+                        for (QueryDocumentSnapshot doc : value) {
+                            if (doc.get("platform") != null && doc.get("username") != null) {
+                                ArrayList<String> social = new ArrayList<String>();
+                                social.add(doc.getDocumentReference("platform").getPath());
+                                social.add(doc.getString("username"));
+                                allSocials.add(social);
+                            }
+                        }
+
+                        Log.d(TAG, "Hierzo! " + allSocials);
+                    }
+                });
+
+    }
+
+    public CollectionReference getSocialsDocRefence(){
+        CollectionReference readDocumentRef = FirebaseFirestore.getInstance().collection("users").document(loggedInUserUid).collection("socials");
+        return readDocumentRef;
+    }
 
     //Auth stuff
     @Override
