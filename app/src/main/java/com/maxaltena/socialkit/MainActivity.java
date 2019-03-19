@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -107,22 +108,61 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
 
-                        for (QueryDocumentSnapshot doc : value) {
+                        // Reset array
+                        allSocials = new ArrayList<>();
+
+                        for (final QueryDocumentSnapshot doc : value) {
                             if (doc.get("platform") != null && doc.get("username") != null) {
-                                ArrayList<String> social = new ArrayList<String>();
-                                String platformRef = doc.getDocumentReference("platform").getPath();
-                                social.add(platformRef);
-                                getPlatforms(platformRef);
-                                social.add(doc.getString("username"));
-                                allSocials.add(social);
+                                final ArrayList<String> social = new ArrayList<String>();
+
+                                final String platformPath = doc.getDocumentReference("platform").getPath();
+                                String[] platformPathParts = platformPath.split("/");
+                                String platform = platformPathParts[1];
+                                String username = doc.getString("username");
+
+                                social.add(username);
+                                social.add(platform);
+
+                                // Below could be a method
+                                DocumentReference readDocumentRef = FirebaseFirestore.getInstance().collection("platforms").document(platform);
+                                readDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                                        @Nullable FirebaseFirestoreException e) {
+                                        if (e != null) {
+                                            Log.w(TAG, "Listen failed.", e);
+                                            return;
+                                        }
+
+                                        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                                                ? "Local" : "Server";
+
+                                        if (snapshot != null && snapshot.exists()) {
+                                            Log.d(TAG, source + " PlatformData: " + snapshot.getData());
+
+                                            // This could be outside of method if I knew how to return correctly
+
+                                            String link = snapshot.getString("link");
+                                            String image = snapshot.getString("image");
+
+                                            social.add(link);
+                                            social.add(image);
+
+                                            allSocials.add(social);
+
+                                            Log.d(TAG, "Platforms: " + allSocials);
+                                        } else {
+                                            Log.d(TAG, source + " PlatformData: null");
+                                        }
+                                    }
+                                });
+                                // End of possible method
                             }
                         }
-
-                        Log.d(TAG, "Hierzo! " + allSocials);
                     }
                 });
-
     }
+
     //Get platforms stuff
     public void getPlatforms(String ref){
         String[] parts = ref.split("/");
@@ -148,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     //Auth stuff
