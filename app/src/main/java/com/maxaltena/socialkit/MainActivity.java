@@ -11,6 +11,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -24,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -55,7 +59,12 @@ public class MainActivity extends AppCompatActivity {
     //User vars
     ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
 
+    //References
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference socialRef;
 
+    //View vars
+    public TextView mTextViewData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        //View vars initialize
+        mTextViewData = findViewById(R.id.TextViewData);
 
         //Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -77,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
                 if(user!= null){
                     //user is signed in
                     loggedInUserUid = user.getUid();
-                    getSocials();
+                    socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
+                    //getSocials();
+                    getSocials2();
 
                 } else {
                     //user is not signed in
@@ -96,9 +110,46 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    protected void getSocials2() {
+        db.collection("users").document(loggedInUserUid).collection("socials").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                //Check if somthing went wrong
+                if (e !=  null){
+                    Log.d(TAG, e.toString());
+                    return;
+                }
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
+                    DocumentSnapshot documentSnapshot = dc.getDocument();
+                    Log.d(TAG, documentSnapshot.getData().toString());
+                    Map<String, Object> data = documentSnapshot.getData();
+                    Social social = documentSnapshot.toObject(Social.class);
+                    int oldIndex = dc.getOldIndex();
+                    int i = 0;
+                    int newIndex = dc.getNewIndex();
+
+
+                    switch (dc.getType()){
+                        case ADDED:
+                            mTextViewData.append("\nAdded: " + social.getUsername());
+                            break;
+                        case MODIFIED:
+                            mTextViewData.append("\nModified: " + social.getUsername());
+                            break;
+                        case REMOVED:
+                            mTextViewData.append("\nRemoved: " + social.getUsername());
+                            break;
+
+                    }
+                }
+            }
+        });
+    }
+
     //Get socials stuff
     public void getSocials(){
-        CollectionReference readDocumentRef = FirebaseFirestore.getInstance().collection("users").document(loggedInUserUid).collection("socials");
+        CollectionReference readDocumentRef = db.collection("users").document(loggedInUserUid).collection("socials");
         readDocumentRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value,
@@ -124,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                                 social.add(platform);
 
                                 // Below could be a method
-                                DocumentReference readDocumentRef = FirebaseFirestore.getInstance().collection("platforms").document(platform);
+                                DocumentReference readDocumentRef = db.collection("platforms").document(platform);
                                 readDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                                     @Override
                                     public void onEvent(@Nullable DocumentSnapshot snapshot,
@@ -168,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         String[] parts = ref.split("/");
         String collection = parts[0];
         String document = parts[1];
-        DocumentReference readDocumentRef = FirebaseFirestore.getInstance().collection(collection).document(document);
+        DocumentReference readDocumentRef = db.collection(collection).document(document);
         readDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot snapshot,
