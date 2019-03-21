@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     //References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference socialRef;
-
+    final ArrayList<String> socialArray = new ArrayList<String>();
     //View vars
     public TextView mTextViewData;
 
@@ -112,9 +112,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void getSocials2() {
-        db.collection("users").document(loggedInUserUid).collection("socials").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+        db.collection("users").document(loggedInUserUid).collection("socials").orderBy("platform").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+
                 //Check if somthing went wrong
                 if (e !=  null){
                     Log.d(TAG, e.toString());
@@ -132,16 +133,17 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (dc.getType()){
                         case ADDED:
-                            mTextViewData.append("\nAdded: " + social.getUsername());
+                            socialArray.add(social.getUsername());
                             break;
                         case MODIFIED:
-                            mTextViewData.append("\nModified: " + social.getUsername());
+                            socialArray.set(newIndex, social.getUsername());
                             break;
                         case REMOVED:
-                            mTextViewData.append("\nRemoved: " + social.getUsername());
                             break;
 
                     }
+                    Log.d(TAG, "dataaa  " + social.getUsername() + " " + oldIndex + " " + newIndex);
+                    mTextViewData.setText(socialArray.toString());
                 }
             }
         });
