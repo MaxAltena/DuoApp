@@ -19,8 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int RC_SIGN_IN = 1;
     public static final String TAG = "Saved";
 
-    //More vars
     public String loggedInUserUid;
 
     //auth
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
+    private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
 
     //User vars
     ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
@@ -85,9 +87,6 @@ public class MainActivity extends AppCompatActivity {
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        //View vars initialize
-
-        initImageBitmaps(socialArray);
 
         //Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -101,10 +100,11 @@ public class MainActivity extends AppCompatActivity {
                 if(user!= null){
                     //user is signed in
                     initAllPlatforms();
+
                     loggedInUserUid = user.getUid();
                     socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
                     //getSocials();
-                    getSocials2();
+
 
                 } else {
                     //user is not signed in
@@ -123,53 +123,44 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void initAllPlatforms(){
-        HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
 
-        ArrayList<String> platformInfo = new ArrayList<>();
-        platformInfo.add("facebook");
-        platformInfo.add("www.facebook.com");
-        platformInfo.add("someimagelink.com");
-        platformhashmap.put(platformInfo.get(0), platformInfo);
-        ArrayList<String> platformInfo2 = new ArrayList<>();
-        platformInfo2.add("instagram");
-        platformInfo2.add("www.instagram.com");
-        platformInfo2.add("someimagelink.com");
-        platformhashmap.put(platformInfo2.get(0), platformInfo2);
-        ArrayList<String> platformInfo3 = new ArrayList<>();
-        platformInfo3.add("twitter");
-        platformInfo3.add("www.twitter.com");
-        platformInfo3.add("someimagelink.com");
-        platformhashmap.put(platformInfo3.get(0), platformInfo3);
-
-        platformhashmap.get("facebook");
-        allPlatforms.add(platformInfo);
-        allPlatforms.add(platformInfo2);
-        Log.d(TAG, "YOO" + platformhashmap.toString());
+        db.collection("platforms")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                ArrayList<String> platformInfo = new ArrayList<>();
+                                if(!document.getId().isEmpty()){
+                                    platformInfo.add(document.getId());
+                                    //0
+                                }
+                                if(!document.get("image").toString().isEmpty()){
+                                    platformInfo.add(document.get("image").toString());
+                                    //1
+                                }
+                                if(!document.get("link").toString().isEmpty()){
+                                    platformInfo.add(document.get("link").toString());
+                                    //2
+                                }
+                                if(!document.get("name").toString().isEmpty()){
+                                    platformInfo.add(document.get("name").toString());
+                                    //3
+                                }
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                MakeHashMap(platformInfo);
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                        getSocials();
+                    }
+                });
     }
-    private void initImageBitmaps(ArrayList<String> socialArray){
-        Log.d(TAG, "initImageBitmaps called");
 
-        mUsernames.clear();
-        mImageUrls.clear();
-        mPlatformLinks.clear();
-        mPlatformNames.clear();
-        for (int i = 0; i < socialArray.size(); i++) {
-            mUsernames.add(socialArray.get(i));
-            mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Ffacebook.png?alt=media&token=82281d58-2d47-47a9-82ac-d36715cfc9ca");
-            mPlatformLinks.add("http://facebook.com");
-            mPlatformNames.add("Facebook");
-        }
 
-        initRecyclerView();
-    }
-    private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView called");
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-    protected void getSocials2() {
+    protected void getSocials() {
         db.collection("users").document(loggedInUserUid).collection("socials").orderBy("platform").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -185,22 +176,26 @@ public class MainActivity extends AppCompatActivity {
                     Map<String, Object> data = documentSnapshot.getData();
                     Social social = documentSnapshot.toObject(Social.class);
                     int oldIndex = dc.getOldIndex();
-                    int i = 0;
                     int newIndex = dc.getNewIndex();
-
-
+                    final String platformPath = documentSnapshot.getDocumentReference("platform").getPath();
+                    String[] platformPathParts = platformPath.split("/");
+                    String platform = platformPathParts[1];
+                    Log.d(TAG, "here" + platform);
+                    socialArray.clear();
                     switch (dc.getType()){
                         case ADDED:
                             socialArray.add(social.getUsername());
+                            initImageBitmaps(socialArray, platform, social.getUsername());
                             break;
                         case MODIFIED:
-                            socialArray.set(newIndex, social.getUsername());
+                            socialArray.set(oldIndex, social.getUsername());
                             break;
                         case REMOVED:
                             break;
 
                     }
-                    initImageBitmaps(socialArray);
+
+
                     Log.d(TAG, "dataaa  " + social.getUsername() + " " + oldIndex + " " + newIndex);
                     //mTextViewData.setText(socialArray.toString());
                 }
@@ -208,99 +203,39 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Get socials stuff
-    public void getSocials(){
-        CollectionReference readDocumentRef = db.collection("users").document(loggedInUserUid).collection("socials");
-        readDocumentRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-
-                        // Reset array
-                        allSocials = new ArrayList<>();
-
-                        for (final QueryDocumentSnapshot doc : value) {
-                            if (doc.get("platform") != null && doc.get("username") != null) {
-                                final ArrayList<String> social = new ArrayList<String>();
-
-                                final String platformPath = doc.getDocumentReference("platform").getPath();
-                                String[] platformPathParts = platformPath.split("/");
-                                String platform = platformPathParts[1];
-                                String username = doc.getString("username");
-
-                                social.add(username);
-                                social.add(platform);
-
-                                // Below could be a method
-                                DocumentReference readDocumentRef = db.collection("platforms").document(platform);
-                                readDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                                        @Nullable FirebaseFirestoreException e) {
-                                        if (e != null) {
-                                            Log.w(TAG, "Listen failed.", e);
-                                            return;
-                                        }
-
-                                        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
-                                                ? "Local" : "Server";
-
-                                        if (snapshot != null && snapshot.exists()) {
-                                            Log.d(TAG, source + " PlatformData: " + snapshot.getData());
-
-                                            // This could be outside of method if I knew how to return correctly
-
-                                            String link = snapshot.getString("link");
-                                            String image = snapshot.getString("image");
-
-                                            social.add(link);
-                                            social.add(image);
-
-                                            allSocials.add(social);
-
-                                            Log.d(TAG, "Platforms: " + allSocials);
-                                        } else {
-                                            Log.d(TAG, source + " PlatformData: null");
-                                        }
-                                    }
-                                });
-                                // End of possible method
-                            }
-                        }
-                    }
-                });
+    private void MakeHashMap(ArrayList<String> array) {
+        platformhashmap.put(array.get(0), array);
     }
 
-    //Get platforms stuff
-    public void getPlatforms(String ref){
-        String[] parts = ref.split("/");
-        String collection = parts[0];
-        String document = parts[1];
-        DocumentReference readDocumentRef = db.collection(collection).document(document);
-        readDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
+    private void initImageBitmaps(ArrayList<String> socialArray, String platform, String username){
+        Log.d(TAG, "initImageBitmaps called");
+        Log.d(TAG, "HEEEY" + platform);
 
-                String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
-                        ? "Local" : "Server";
 
-                if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, source + " dataaaaaaaaaaaaa: " + snapshot.getData());
-                } else {
-                    Log.d(TAG, source + " data: null");
-                }
-            }
-        });
+            ArrayList<String> platformData = new ArrayList<>();
+            platformData = platformhashmap.get(platform);
+            Log.d(TAG, "HAHAHA" + platformData);
+            mUsernames.add(socialArray.get(0));
+            mImageUrls.add(platformData.get(1));
+            mPlatformLinks.add(platformData.get(2));
+            mPlatformNames.add(platformData.get(3));
+
+
+        initRecyclerView();
     }
+    private void initRecyclerView(){
+        Log.d(TAG, "initRecyclerView called");
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
+        Log.d(TAG, "mImageUrls" + mImageUrls);
+        Log.d(TAG, "mUsernames" + mUsernames);
+        Log.d(TAG, "mPlatformLinks" + mPlatformLinks);
+        Log.d(TAG, "mPlatformLinks" + mPlatformNames);
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
 
     //Auth stuff
     @Override
