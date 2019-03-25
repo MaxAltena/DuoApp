@@ -38,6 +38,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
 
-    //Test vars
+    //list vars
+    private ArrayList<ArrayList> allPlatforms = new ArrayList<ArrayList>();
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 //Check if user is logged in
                 if(user!= null){
                     //user is signed in
+                    initAllPlatforms();
                     loggedInUserUid = user.getUid();
                     socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
                     //getSocials();
@@ -119,7 +122,30 @@ public class MainActivity extends AppCompatActivity {
         };
 
     }
+    private void initAllPlatforms(){
+        HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
 
+        ArrayList<String> platformInfo = new ArrayList<>();
+        platformInfo.add("facebook");
+        platformInfo.add("www.facebook.com");
+        platformInfo.add("someimagelink.com");
+        platformhashmap.put(platformInfo.get(0), platformInfo);
+        ArrayList<String> platformInfo2 = new ArrayList<>();
+        platformInfo2.add("instagram");
+        platformInfo2.add("www.instagram.com");
+        platformInfo2.add("someimagelink.com");
+        platformhashmap.put(platformInfo2.get(0), platformInfo2);
+        ArrayList<String> platformInfo3 = new ArrayList<>();
+        platformInfo3.add("twitter");
+        platformInfo3.add("www.twitter.com");
+        platformInfo3.add("someimagelink.com");
+        platformhashmap.put(platformInfo3.get(0), platformInfo3);
+
+        platformhashmap.get("facebook");
+        allPlatforms.add(platformInfo);
+        allPlatforms.add(platformInfo2);
+        Log.d(TAG, "YOO" + platformhashmap.toString());
+    }
     private void initImageBitmaps(ArrayList<String> socialArray){
         Log.d(TAG, "initImageBitmaps called");
 
