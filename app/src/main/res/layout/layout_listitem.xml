@@ -20,4 +20,19 @@
         android:layout_toRightOf="@+id/image"
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Facebook"
+        android:id="@+id/platformname"
+        android:layout_toRightOf="@+id/image"
+        android:layout_marginLeft="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="https://www.facebook.com"
+        android:id="@+id/platformlink"
+        android:layout_toRightOf="@+id/image"
+        android:layout_toEndOf="@+id/platformname"
+        android:layout_marginLeft="20dp"/>
 </RelativeLayout>

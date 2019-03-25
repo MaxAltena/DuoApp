@@ -23,12 +23,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
+    private ArrayList<String> mPlatformNames = new ArrayList<>();
+    private ArrayList<String> mPlatformLinks = new ArrayList<>();
+    private ArrayList<String> mPlatformImages = new ArrayList<>();
     private Context mContext;
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages,  ArrayList<String> mPlatformNames,  ArrayList<String> mPlatformLinks) {
         this.mUsernames = mUsernames;
         this.mImages = mImages;
         this.mContext = mContext;
+        this.mPlatformNames = mPlatformNames;
+        this.mPlatformLinks = mPlatformLinks;
     }
 
     @NonNull
@@ -49,6 +54,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 .into(holder.image);
 
         holder.username.setText(mUsernames.get(position));
+        holder.platformname.setText(mPlatformNames.get(position));
+        holder.platformlink.setText(mPlatformLinks.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,12 +76,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         ImageView image;
         TextView username;
+        TextView platformname;
+        TextView platformlink;
         RelativeLayout parentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
             username = itemView.findViewById(R.id.username);
+            platformname = itemView.findViewById(R.id.platformname);
+            platformlink = itemView.findViewById(R.id.platformlink);
             parentLayout = itemView.findViewById(R.id.parent_layout);
         }
     }

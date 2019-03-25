@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     //Test vars
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
+    private ArrayList<String> mPlatformNames = new ArrayList<>();
+    private ArrayList<String> mPlatformLinks = new ArrayList<>();
 
     //User vars
     ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
@@ -120,16 +122,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void initImageBitmaps(ArrayList<String> socialArray){
         Log.d(TAG, "initImageBitmaps called");
-        mUsernames.add("fbtest");
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Ffacebook.png?alt=media&token=81d3ac33-30e9-4916-a971-4ff7877c08b8");
 
-        mUsernames.add("igtest");
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Finstagram.png?alt=media&token=2e2fc69f-a990-4d0e-b722-07e821a5363a");
         mUsernames.clear();
         mImageUrls.clear();
+        mPlatformLinks.clear();
+        mPlatformNames.clear();
         for (int i = 0; i < socialArray.size(); i++) {
             mUsernames.add(socialArray.get(i));
             mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Ffacebook.png?alt=media&token=82281d58-2d47-47a9-82ac-d36715cfc9ca");
+            mPlatformLinks.add("http://facebook.com");
+            mPlatformNames.add("Facebook");
         }
 
         initRecyclerView();
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView called");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
