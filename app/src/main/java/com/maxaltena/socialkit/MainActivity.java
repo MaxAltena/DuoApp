@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         //View vars initialize
 
-        initImageBitmaps();
+        initImageBitmaps(socialArray);
 
         //Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     loggedInUserUid = user.getUid();
                     socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
                     //getSocials();
-                    //getSocials2();
+                    getSocials2();
 
                 } else {
                     //user is not signed in
@@ -118,13 +118,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initImageBitmaps(){
+    private void initImageBitmaps(ArrayList<String> socialArray){
         Log.d(TAG, "initImageBitmaps called");
         mUsernames.add("fbtest");
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Ffacebook.png?alt=media&token=81d3ac33-30e9-4916-a971-4ff7877c08b8");
 
         mUsernames.add("igtest");
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Finstagram.png?alt=media&token=2e2fc69f-a990-4d0e-b722-07e821a5363a");
+        mUsernames.clear();
+        mImageUrls.clear();
+        for (int i = 0; i < socialArray.size(); i++) {
+            mUsernames.add(socialArray.get(i));
+            mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Ffacebook.png?alt=media&token=82281d58-2d47-47a9-82ac-d36715cfc9ca");
+        }
 
         initRecyclerView();
     }
@@ -166,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
 
                     }
+                    initImageBitmaps(socialArray);
                     Log.d(TAG, "dataaa  " + social.getUsername() + " " + oldIndex + " " + newIndex);
                     //mTextViewData.setText(socialArray.toString());
                 }
