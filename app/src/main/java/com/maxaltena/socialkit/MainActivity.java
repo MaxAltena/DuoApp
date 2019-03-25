@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
+
+    //Test vars
+    private ArrayList<String> mUsernames = new ArrayList<>();
+    private ArrayList<String> mImageUrls = new ArrayList<>();
+
     //User vars
     ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
 
@@ -75,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         //View vars initialize
-        mTextViewData = findViewById(R.id.TextViewData);
+
+        initImageBitmaps();
 
         //Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -91,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     loggedInUserUid = user.getUid();
                     socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
                     //getSocials();
-                    getSocials2();
+                    //getSocials2();
 
                 } else {
                     //user is not signed in
@@ -110,7 +118,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initImageBitmaps(){
+        Log.d(TAG, "initImageBitmaps called");
+        mUsernames.add("fbtest");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Ffacebook.png?alt=media&token=81d3ac33-30e9-4916-a971-4ff7877c08b8");
 
+        mUsernames.add("igtest");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/socialkit-pro.appspot.com/o/icons%2Finstagram.png?alt=media&token=2e2fc69f-a990-4d0e-b722-07e821a5363a");
+
+        initRecyclerView();
+    }
+    private void initRecyclerView(){
+        Log.d(TAG, "initRecyclerView called");
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
     protected void getSocials2() {
         db.collection("users").document(loggedInUserUid).collection("socials").orderBy("platform").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
@@ -143,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     Log.d(TAG, "dataaa  " + social.getUsername() + " " + oldIndex + " " + newIndex);
-                    mTextViewData.setText(socialArray.toString());
+                    //mTextViewData.setText(socialArray.toString());
                 }
             }
         });
