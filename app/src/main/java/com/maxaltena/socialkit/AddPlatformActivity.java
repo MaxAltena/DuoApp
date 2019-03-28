@@ -32,7 +32,6 @@ public class AddPlatformActivity extends AppCompatActivity {
     public static final String SOCIAL_MEDIA_NAME = "name";
     public static final String SOCIAL_MEDIA_LINK = "link";
     public static final String TAG = "Saved";
-    public  TextView allText;
 
     //db
     private DocumentReference mWriteDocRef;
@@ -42,11 +41,6 @@ public class AddPlatformActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_platform);
-
-        //View vars
-        allText = (TextView) findViewById(R.id.textViewAll);
-
-
         getPlatforms();
     }
 
@@ -67,8 +61,6 @@ public class AddPlatformActivity extends AppCompatActivity {
                                 platforms.add(doc.getString("name"));
                             }
                         }
-                        Log.d(TAG, "Hierzo! " + platforms);
-                        allText.setText(platforms.toString());
                     }
                 });
 
@@ -106,6 +98,8 @@ public class AddPlatformActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Document probably saved to " + mWriteDocRef.getPath());
+                setResult(69);
+                finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

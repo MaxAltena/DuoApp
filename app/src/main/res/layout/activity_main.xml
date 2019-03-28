@@ -9,9 +9,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="420dp"
+        android:layout_height="483dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="311dp">
+        android:layout_marginBottom="248dp">
 
     </android.support.v7.widget.RecyclerView>
 
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="504dp"
+        android:layout_marginTop="487dp"
         android:onClick="StartAddSocialActivity"
         android:text="Button" />
 

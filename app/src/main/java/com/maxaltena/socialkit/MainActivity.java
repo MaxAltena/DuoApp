@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     // final vars
     public static final int RC_SIGN_IN = 1;
+    static final int REQUEST_COMPLETE_CODE = 69;  // The request code
     public static final String TAG = "Saved";
 
     //auth
@@ -73,12 +74,13 @@ public class MainActivity extends AppCompatActivity {
     private CollectionReference socialRef;
     final ArrayList<String> socialArray = new ArrayList<String>();
 
-    //View vars
-    public TextView mTextViewData;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //if rebooted the arrays were still there, thats why this method is called.
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -110,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
         };
 
     }
+
+    private void resetLoadedData() {
+        mUsernames.clear();
+        mImageUrls.clear();
+        mPlatformLinks.clear();
+        mPlatformNames.clear();
+    }
+
     private void initAllPlatforms(){
         db.collection("platforms")
                 .get()
@@ -165,12 +175,21 @@ public class MainActivity extends AppCompatActivity {
                             updateSocial(social.getUsername(), oldIndex);
                             break;
                         case REMOVED:
+                            removeSocial(oldIndex);
                             break;
 
                     }
                 }
             }
         });
+    }
+
+    private void removeSocial(int oldIndex) {
+        mUsernames.remove(oldIndex);
+        mImageUrls.remove(oldIndex);
+        mPlatformLinks.remove(oldIndex);
+        mPlatformNames.remove(oldIndex);
+        initRecyclerView();
     }
 
     private void updateSocial(String newUsername, int oldIndex) {
@@ -187,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
         platformData.clear();
         platformData = platformhashmap.get(platform);
         mUsernames.add(socialArray.get(0));
-        //Log.d(TAG, "YOOOO" + socialArray.toString());
         mImageUrls.add(platformData.get(1));
         mPlatformLinks.add(platformData.get(2));
         mPlatformNames.add(platformData.get(3));
@@ -212,8 +230,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        resetLoadedData();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     //Replaces menu with main_menu.xml
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -251,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
     public void StartAddSocialActivity(View view) {
         Intent intent = new Intent(this, AddSocialsActivity.class);
         intent.putExtra("userUID", loggedInUserUid);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_COMPLETE_CODE);
     }
     //Change view
     public void StartAddPlatformActivity(View view) {
