@@ -210,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
     }
 
+    
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
     }
