@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
     private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
     private HashMap<String, ArrayList<String>> completeHashmap = new HashMap<String, ArrayList<String>>();
+    private ArrayList<String> platformData = new ArrayList<>();
 
     //References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -135,7 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void getSocials() {
-        db.collection("users").document(loggedInUserUid).collection("socials").orderBy("platform").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+        db.collection("users")
+                .document(loggedInUserUid)
+                .collection("socials")
+                .orderBy("platform")
+                .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
                 //Check if somthing went wrong
@@ -147,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
                     DocumentSnapshot documentSnapshot = dc.getDocument();
                     Social social = documentSnapshot.toObject(Social.class);
                     int oldIndex = dc.getOldIndex();
-                    int newIndex = dc.getNewIndex();
                     final String platformPath = documentSnapshot.getDocumentReference("platform").getPath();
                     String[] platformPathParts = platformPath.split("/");
                     String platform = platformPathParts[1];
@@ -158,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                             initImageBitmaps(socialArray, platform);
                             break;
                         case MODIFIED:
-                            updateSocial(platform, social.getUsername(), oldIndex, newIndex);
+                            updateSocial(social.getUsername(), oldIndex);
                             break;
                         case REMOVED:
                             break;
@@ -169,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void updateSocial(String platform, String newUsername, int oldIndex, int newIndex) {
+    private void updateSocial(String newUsername, int oldIndex) {
         mUsernames.set(oldIndex, newUsername);
         initRecyclerView();
     }
@@ -180,8 +184,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initImageBitmaps(ArrayList<String> socialArray, String platform){
         Log.d(TAG, "initImageBitmaps called");
-        ArrayList<String> platformData = new ArrayList<>();
+        platformData.clear();
         platformData = platformhashmap.get(platform);
+        Log.d(TAG, "YO" + platformhashmap.toString());
         mUsernames.add(socialArray.get(0));
         mImageUrls.add(platformData.get(1));
         mPlatformLinks.add(platformData.get(2));
