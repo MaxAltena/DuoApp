@@ -199,19 +199,46 @@ public class MainActivity extends AppCompatActivity {
 
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
+
     }
 
     private void initImageBitmaps(ArrayList<String> socialArray, String platform){
         Log.d(TAG, "initImageBitmaps called");
         platformData.clear();
-        platformData = platformhashmap.get(platform);
-        mUsernames.add(socialArray.get(0));
-        mImageUrls.add(platformData.get(1));
-        mPlatformLinks.add(platformData.get(2));
-        mPlatformNames.add(platformData.get(3));
-        platformData.add(socialArray.get(0));
+        if(platformhashmap.containsKey(platform)){
+            platformData = platformhashmap.get(platform);
+        }else{
+            return;
+        }
+
+        if(!socialArray.get(0).isEmpty()){
+            mUsernames.add(socialArray.get(0));
+        }else{
+            mUsernames.add("Username add error");
+        }
+        if(!platformData.get(1).isEmpty()){
+            mImageUrls.add(platformData.get(1));
+        }else{
+            mImageUrls.add("Image add error");
+        }
+        if(!platformData.get(2).isEmpty()){
+            mPlatformLinks.add(platformData.get(2));
+        }else{
+            mPlatformLinks.add("Platform link add error");
+        }
+        if(!platformData.get(3).isEmpty()){
+            mPlatformNames.add(platformData.get(3));
+        }else{
+            mPlatformNames.add("Platform name add error");
+        }
+        if(!socialArray.get(0).isEmpty()){
+            platformData.add(socialArray.get(0));
+        }else{
+            mPlatformNames.add("Platform name add error");
+        }
         completeHashmap.put(platformData.get(3), platformData);
         initRecyclerView();
+        Log.d(TAG, "YAAAA" + platformhashmap.toString());
     }
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView called");
