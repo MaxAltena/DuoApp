@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
     private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> completeHashmap = new HashMap<String, ArrayList<String>>();
 
     //User vars
     ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
@@ -185,10 +186,10 @@ public class MainActivity extends AppCompatActivity {
                     switch (dc.getType()){
                         case ADDED:
                             socialArray.add(social.getUsername());
-                            initImageBitmaps(socialArray, platform, social.getUsername());
+                            initImageBitmaps(socialArray, platform);
                             break;
                         case MODIFIED:
-                            socialArray.set(oldIndex, social.getUsername());
+                            updateSocial(platform, social.getUsername(), oldIndex, newIndex);
                             break;
                         case REMOVED:
                             break;
@@ -203,11 +204,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void updateSocial(String platform, String newUsername, int oldIndex, int newIndex) {
+        String oldUsername = completeHashmap.get(platform).get(4);
+        mUsernames.set(oldIndex, newUsername);
+        initRecyclerView();
+    }
+
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
     }
 
-    private void initImageBitmaps(ArrayList<String> socialArray, String platform, String username){
+    private void initImageBitmaps(ArrayList<String> socialArray, String platform){
         Log.d(TAG, "initImageBitmaps called");
         Log.d(TAG, "HEEEY" + platform);
 
@@ -219,8 +226,9 @@ public class MainActivity extends AppCompatActivity {
             mImageUrls.add(platformData.get(1));
             mPlatformLinks.add(platformData.get(2));
             mPlatformNames.add(platformData.get(3));
-
-
+            platformData.add(socialArray.get(0));
+            completeHashmap.put(platformData.get(3), platformData);
+            Log.d(TAG, "Stoer" + completeHashmap.toString());
         initRecyclerView();
     }
     private void initRecyclerView(){
