@@ -67,6 +67,7 @@ public class AddSocialsActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d(TAG, "Document probably saved to " + mDocRef.getPath());
+                    finish();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

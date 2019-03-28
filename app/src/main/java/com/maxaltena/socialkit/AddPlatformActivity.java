@@ -98,8 +98,7 @@ public class AddPlatformActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Document probably saved to " + mWriteDocRef.getPath());
-                setResult(69);
-                finish();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -107,5 +106,6 @@ public class AddPlatformActivity extends AppCompatActivity {
                 Log.d(TAG, "Document saving failed", e);
             }
         });
+
     }
 }
