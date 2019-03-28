@@ -56,21 +56,25 @@ public class AddSocialsActivity extends AppCompatActivity {
 
         mDocRef = setDocumentReference();
 
-        if(socialMediaPlatformText.isEmpty() || socialMediaUsernameText.isEmpty()){return;}
-        Map<String, Object> dataToSave = new HashMap<String, Object>();
-        dataToSave.put(SOCIAL_MEDIA_PLATFORM, platform);
-        dataToSave.put(SOCIAL_MEDIA_USERNAME, socialMediaUsernameText);
+        if(socialMediaPlatformText.isEmpty() || socialMediaUsernameText.isEmpty()){
+            return;
+        }else{
+            Map<String, Object> dataToSave = new HashMap<String, Object>();
+            dataToSave.put(SOCIAL_MEDIA_PLATFORM, platform);
+            dataToSave.put(SOCIAL_MEDIA_USERNAME, socialMediaUsernameText);
 
-        mDocRef.set(dataToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Document probably saved to " + mDocRef.getPath());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Document saving failed", e);
-            }
-        });
+            mDocRef.set(dataToSave).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d(TAG, "Document probably saved to " + mDocRef.getPath());
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Document saving failed", e);
+                }
+            });
+        }
+
     }
 }

@@ -186,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "initImageBitmaps called");
         platformData.clear();
         platformData = platformhashmap.get(platform);
-        Log.d(TAG, "YO" + platformhashmap.toString());
         mUsernames.add(socialArray.get(0));
+        //Log.d(TAG, "YOOOO" + socialArray.toString());
         mImageUrls.add(platformData.get(1));
         mPlatformLinks.add(platformData.get(2));
         mPlatformNames.add(platformData.get(3));
