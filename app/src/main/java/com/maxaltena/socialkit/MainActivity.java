@@ -54,15 +54,12 @@ public class MainActivity extends AppCompatActivity {
     public static final int RC_SIGN_IN = 1;
     public static final String TAG = "Saved";
 
-    public String loggedInUserUid;
-
     //auth
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-
+    public String loggedInUserUid;
 
     //list vars
-    private ArrayList<ArrayList> allPlatforms = new ArrayList<ArrayList>();
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
@@ -70,13 +67,11 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
     private HashMap<String, ArrayList<String>> completeHashmap = new HashMap<String, ArrayList<String>>();
 
-    //User vars
-    ArrayList<ArrayList<String>> allSocials = new ArrayList<ArrayList<String>>();
-
     //References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference socialRef;
     final ArrayList<String> socialArray = new ArrayList<String>();
+
     //View vars
     public TextView mTextViewData;
 
@@ -84,29 +79,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
-
-
         //Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 //Get user
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-
-
                 //Check if user is logged in
                 if(user!= null){
                     //user is signed in
                     initAllPlatforms();
-
                     loggedInUserUid = user.getUid();
                     socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
-                    //getSocials();
-
-
                 } else {
                     //user is not signed in
                     startActivityForResult(
@@ -124,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void initAllPlatforms(){
-
         db.collection("platforms")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -133,22 +118,10 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 ArrayList<String> platformInfo = new ArrayList<>();
-                                if(!document.getId().isEmpty()){
-                                    platformInfo.add(document.getId());
-                                    //0
-                                }
-                                if(!document.get("image").toString().isEmpty()){
-                                    platformInfo.add(document.get("image").toString());
-                                    //1
-                                }
-                                if(!document.get("link").toString().isEmpty()){
-                                    platformInfo.add(document.get("link").toString());
-                                    //2
-                                }
-                                if(!document.get("name").toString().isEmpty()){
-                                    platformInfo.add(document.get("name").toString());
-                                    //3
-                                }
+                                if(!document.getId().isEmpty()){platformInfo.add(document.getId()); }
+                                if(!document.get("image").toString().isEmpty()){ platformInfo.add(document.get("image").toString()); }
+                                if(!document.get("link").toString().isEmpty()){ platformInfo.add(document.get("link").toString()); }
+                                if(!document.get("name").toString().isEmpty()){ platformInfo.add(document.get("name").toString()); }
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                                 MakeHashMap(platformInfo);
                             }
@@ -165,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
         db.collection("users").document(loggedInUserUid).collection("socials").orderBy("platform").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
-
                 //Check if somthing went wrong
                 if (e !=  null){
                     Log.d(TAG, e.toString());
@@ -173,15 +145,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
                     DocumentSnapshot documentSnapshot = dc.getDocument();
-                    Log.d(TAG, documentSnapshot.getData().toString());
-                    Map<String, Object> data = documentSnapshot.getData();
                     Social social = documentSnapshot.toObject(Social.class);
                     int oldIndex = dc.getOldIndex();
                     int newIndex = dc.getNewIndex();
                     final String platformPath = documentSnapshot.getDocumentReference("platform").getPath();
                     String[] platformPathParts = platformPath.split("/");
                     String platform = platformPathParts[1];
-                    Log.d(TAG, "here" + platform);
                     socialArray.clear();
                     switch (dc.getType()){
                         case ADDED:
@@ -195,56 +164,39 @@ public class MainActivity extends AppCompatActivity {
                             break;
 
                     }
-
-
-                    Log.d(TAG, "dataaa  " + social.getUsername() + " " + oldIndex + " " + newIndex);
-                    //mTextViewData.setText(socialArray.toString());
                 }
             }
         });
     }
 
     private void updateSocial(String platform, String newUsername, int oldIndex, int newIndex) {
-        String oldUsername = completeHashmap.get(platform).get(4);
         mUsernames.set(oldIndex, newUsername);
         initRecyclerView();
     }
 
-    
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
     }
 
     private void initImageBitmaps(ArrayList<String> socialArray, String platform){
         Log.d(TAG, "initImageBitmaps called");
-        Log.d(TAG, "HEEEY" + platform);
-
-
-            ArrayList<String> platformData = new ArrayList<>();
-            platformData = platformhashmap.get(platform);
-            Log.d(TAG, "HAHAHA" + platformData);
-            mUsernames.add(socialArray.get(0));
-            mImageUrls.add(platformData.get(1));
-            mPlatformLinks.add(platformData.get(2));
-            mPlatformNames.add(platformData.get(3));
-            platformData.add(socialArray.get(0));
-            completeHashmap.put(platformData.get(3), platformData);
-            Log.d(TAG, "Stoer" + completeHashmap.toString());
+        ArrayList<String> platformData = new ArrayList<>();
+        platformData = platformhashmap.get(platform);
+        mUsernames.add(socialArray.get(0));
+        mImageUrls.add(platformData.get(1));
+        mPlatformLinks.add(platformData.get(2));
+        mPlatformNames.add(platformData.get(3));
+        platformData.add(socialArray.get(0));
+        completeHashmap.put(platformData.get(3), platformData);
         initRecyclerView();
     }
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView called");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
-        Log.d(TAG, "mImageUrls" + mImageUrls);
-        Log.d(TAG, "mUsernames" + mUsernames);
-        Log.d(TAG, "mPlatformLinks" + mPlatformLinks);
-        Log.d(TAG, "mPlatformLinks" + mPlatformNames);
-
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
 
     //Auth stuff
     @Override
