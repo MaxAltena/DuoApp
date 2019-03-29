@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -99,6 +100,7 @@ public class SocialActivity extends AppCompatActivity {
                     }
                 });
         Toast.makeText(SocialActivity.this, "Profile updated!", Toast.LENGTH_SHORT).show();
+        username = mUsernameEditText.getText().toString();
     }
     public void deleteSocial(View v) {
         new AlertDialog.Builder(this)
@@ -126,6 +128,11 @@ public class SocialActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton(android.R.string.no, null).show();
+    }
+    public void openSocial(View v){
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(platformLink+username));
+        startActivity(i);
     }
 
 }
