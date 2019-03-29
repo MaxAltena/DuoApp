@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -24,22 +26,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private  final String PLATFORM_NAME = "Platform Name";
     private  final String PLATFORM_LINK = "Platform Link";
     private  final String PLATFORM_IMAGE = "Platform Image";
+    private  final String LOGGED_IN_USER = "Current User";
     private  final String USERNAME = "Username";
+    private  final String ID = "ID";
 
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
+    private ArrayList<String> mIds = new ArrayList<>();
     private ArrayList<String> mPlatformImages = new ArrayList<>();
     private Context mContext;
 
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages,  ArrayList<String> mPlatformNames,  ArrayList<String> mPlatformLinks) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages,  ArrayList<String> mPlatformNames,  ArrayList<String> mPlatformLinks, ArrayList mIds) {
         this.mUsernames = mUsernames;
         this.mImages = mImages;
         this.mContext = mContext;
         this.mPlatformNames = mPlatformNames;
         this.mPlatformLinks = mPlatformLinks;
+        this.mIds = mIds;
     }
 
     @NonNull
@@ -71,6 +77,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 socialIntent.putExtra(PLATFORM_LINK, mPlatformLinks.get(position));
                 socialIntent.putExtra(PLATFORM_IMAGE, mImages.get(position));
                 socialIntent.putExtra(USERNAME, mUsernames.get(position));
+                socialIntent.putExtra(ID, mIds.get(position));
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Log.d(TAG, "onClick : Clicked on:" + user.getUid());
+                socialIntent.putExtra(LOGGED_IN_USER, user.getUid());
                 v.getContext().startActivity(socialIntent);
                 Log.d(TAG, "onClick : Clicked on:" + mUsernames.get(position));
             }
