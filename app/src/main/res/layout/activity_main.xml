@@ -5,24 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <include android:id="@+id/toolbar" layout="@layout/toolbar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="483dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="248dp">
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
 
-    </android.support.v7.widget.RecyclerView>
-
-    <Button
-        android:id="@+id/button"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="487dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
         android:onClick="StartAddSocialActivity"
-        android:text="Button" />
-
-
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:rippleColor="@color/colorPrimary"
+        android:src="@drawable/add"
+        android:elevation="4dp" />
 </RelativeLayout>
