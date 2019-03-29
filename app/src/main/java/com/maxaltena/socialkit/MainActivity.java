@@ -1,7 +1,6 @@
 package com.maxaltena.socialkit;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,27 +11,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,13 +28,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,8 +64,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //if rebooted the arrays were still there, thats why this method is called.
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        // Toolbar
+        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("  SocialKit");
+        getSupportActionBar().setIcon(getDrawable(R.mipmap.socialkit_logo));
+
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
         //Reference and listeners
@@ -153,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                //Check if somthing went wrong
+                //Check if something went wrong
                 if (e !=  null){
                     Log.d(TAG, e.toString());
                     return;
@@ -266,11 +256,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    //Replaces menu with main_menu.xml
+    //Replaces toolbar_menu with main_menu.xml
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
     @Override
@@ -291,6 +280,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.camera_menu:
+                // Camera clicked
+                Toast.makeText(this, "Camera was activated", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.settings_menu:
+                // Settings clicked
+                Toast.makeText(this, "Settings was clicked", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.sign_out_menu:
                 //Sign out
                 AuthUI.getInstance().signOut(this);

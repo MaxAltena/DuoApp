@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SocialKit</string>
+    <string name="settings">Settings</string>
     <string name="sign_out">Sign Out</string>
-
     <string name="submit">Submit</string>
 
     <string name="socialMediaUsername">john.doe</string>
@@ -11,5 +11,4 @@
     <string name="platformName">Facebook</string>
     <string name="linkWhitoutUsername">https://www.facebook.com/</string>
     <string name="imageLink">Place where image is stored</string>
-
 </resources>
