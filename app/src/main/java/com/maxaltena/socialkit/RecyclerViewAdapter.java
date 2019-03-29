@@ -19,10 +19,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
-
     private static final String TAG = "RecyclerViewAdapter";
-    private  final String PLATFORM_NAME = "Platform Name";
-    private  final String PLATFORM_LINK = "Platform Link";
     private  final String PLATFORM_IMAGE = "Platform Image";
     private  final String USERNAME = "Username";
 
@@ -60,15 +57,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 .into(holder.image);
 
         holder.username.setText(mUsernames.get(position));
-        holder.platformname.setText(mPlatformNames.get(position));
-        holder.platformlink.setText(mPlatformLinks.get(position));
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent socialIntent = new Intent (v.getContext(), SocialActivity.class);
-                socialIntent.putExtra(PLATFORM_NAME, mPlatformNames.get(position));
-                socialIntent.putExtra(PLATFORM_LINK, mPlatformLinks.get(position));
                 socialIntent.putExtra(PLATFORM_IMAGE, mImages.get(position));
                 socialIntent.putExtra(USERNAME, mUsernames.get(position));
                 v.getContext().startActivity(socialIntent);
@@ -87,17 +80,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         ImageView image;
         TextView username;
-        TextView platformname;
-        TextView platformlink;
         RelativeLayout parentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
             username = itemView.findViewById(R.id.username);
-            platformname = itemView.findViewById(R.id.platformname);
-            platformlink = itemView.findViewById(R.id.platformlink);
-            parentLayout = itemView.findViewById(R.id.parent_layout);
+            parentLayout = itemView.findViewById(R.id.social_card);
         }
     }
 }

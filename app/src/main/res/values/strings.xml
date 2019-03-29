@@ -16,4 +16,6 @@
     <string name="groups">Groups</string>
     <string name="search">Search</string>
     <string name="profile">Profile</string>
+    <string name="placeholderPlatformLogo">PlatformLogo</string>
+    <string name="placeholderUsername">username</string>
 </resources>
