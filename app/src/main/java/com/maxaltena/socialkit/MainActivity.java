@@ -239,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
-
     }
 
     private void initImageBitmaps(ArrayList<String> socialArray, String platform){
@@ -359,6 +358,11 @@ public class MainActivity extends AppCompatActivity {
     //Change view
     public void StartAddPlatformActivity(View view) {
         Intent intent = new Intent(this, AddPlatformActivity.class);
+        startActivity(intent);
+    }
+    //Change view
+    public void StartUserActivity(View view) {
+        Intent intent = new Intent(this, UserActivity.class);
         startActivity(intent);
     }
 }
