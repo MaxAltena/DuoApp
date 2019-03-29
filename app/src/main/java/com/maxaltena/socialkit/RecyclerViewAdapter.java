@@ -1,6 +1,7 @@
 package com.maxaltena.socialkit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,10 @@ import java.util.ArrayList;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "RecyclerViewAdapter";
+    private  final String PLATFORM_NAME = "Platform Name";
+    private  final String PLATFORM_LINK = "Platform Link";
+    private  final String PLATFORM_IMAGE = "Platform Image";
+    private  final String USERNAME = "Username";
 
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
@@ -27,6 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
     private ArrayList<String> mPlatformImages = new ArrayList<>();
     private Context mContext;
+
 
     public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages,  ArrayList<String> mPlatformNames,  ArrayList<String> mPlatformLinks) {
         this.mUsernames = mUsernames;
@@ -60,8 +66,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent socialIntent = new Intent (v.getContext(), SocialActivity.class);
+                socialIntent.putExtra(PLATFORM_NAME, mPlatformNames.get(position));
+                socialIntent.putExtra(PLATFORM_LINK, mPlatformLinks.get(position));
+                socialIntent.putExtra(PLATFORM_IMAGE, mImages.get(position));
+                socialIntent.putExtra(USERNAME, mUsernames.get(position));
+                v.getContext().startActivity(socialIntent);
                 Log.d(TAG, "onClick : Clicked on:" + mUsernames.get(position));
-                Toast.makeText(mContext, mUsernames.get(position), Toast.LENGTH_SHORT).show();
             }
 
         });
