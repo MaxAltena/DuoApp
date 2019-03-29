@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
+    private ArrayList<String> mIds = new ArrayList<>();
     private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
     private HashMap<String, ArrayList<String>> completeHashmap = new HashMap<String, ArrayList<String>>();
     private ArrayList<String> platformData = new ArrayList<>();
@@ -153,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
         mUsernames.clear();
         mImageUrls.clear();
         mPlatformLinks.clear();
+        mIds.clear();
         mPlatformNames.clear();
     }
 
@@ -205,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     switch (dc.getType()){
                         case ADDED:
                             socialArray.add(social.getUsername());
+                            socialArray.add(documentSnapshot.getId());
                             initImageBitmaps(socialArray, platform);
                             break;
                         case MODIFIED:
@@ -224,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
         mUsernames.remove(oldIndex);
         mImageUrls.remove(oldIndex);
         mPlatformLinks.remove(oldIndex);
+        mIds.remove(oldIndex);
         mPlatformNames.remove(oldIndex);
         initRecyclerView();
     }
@@ -270,7 +274,12 @@ public class MainActivity extends AppCompatActivity {
         if(!socialArray.get(0).isEmpty()){
             platformData.add(socialArray.get(0));
         }else{
-            mPlatformNames.add("Platform name add error");
+            platformData.add("Platform name add error");
+        }
+        if(!socialArray.get(1).isEmpty()){
+            mIds.add(socialArray.get(1));
+        }else{
+            mIds.add("Platform Id add error");
         }
         completeHashmap.put(platformData.get(3), platformData);
         initRecyclerView();
@@ -279,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView called");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks, mIds);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
