@@ -26,7 +26,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private  final String LOGGED_IN_USER = "Current User";
     private  final String USERNAME = "Username";
     private  final String ID = "ID";
-
+    private  final String PLATFORM_LINKS = "Platform Link";
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
@@ -70,6 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Intent socialIntent = new Intent (v.getContext(), SocialActivity.class);
                 socialIntent.putExtra(PLATFORM_IMAGE, mImages.get(position));
                 socialIntent.putExtra(USERNAME, mUsernames.get(position));
+                socialIntent.putExtra(PLATFORM_LINKS, mPlatformLinks.get(position));
                 socialIntent.putExtra(ID, mIds.get(position));
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(TAG, "onClick : Clicked on:" + user.getUid());

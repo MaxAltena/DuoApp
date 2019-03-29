@@ -131,6 +131,7 @@ public class SocialActivity extends AppCompatActivity {
     }
     public void openSocial(View v){
         Intent i = new Intent(Intent.ACTION_VIEW);
+        Log.v(TAG, "Whatsinhere " + platformLink + username);
         i.setData(Uri.parse(platformLink+username));
         startActivity(i);
     }
