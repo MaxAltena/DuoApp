@@ -1,10 +1,12 @@
 package com.maxaltena.socialkit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -36,7 +39,7 @@ public class SocialActivity extends AppCompatActivity {
     private String currentUser;
     private String socialId;
     private ImageView mImage;
-
+    private DocumentReference socialRef;
     private TextView mPlatformLinkTextView;
     private TextView mPlatformnameTextView;
     private EditText mUsernameEditText;
@@ -53,7 +56,6 @@ public class SocialActivity extends AppCompatActivity {
         mPlatformLinkTextView  = (TextView)findViewById(R.id.textView3);
         mImage = (ImageView)findViewById(R.id.imageView);
 
-
         //Get intent vars
         Intent social = getIntent();
         username = social.getStringExtra("Username");
@@ -63,6 +65,8 @@ public class SocialActivity extends AppCompatActivity {
         socialId = social.getStringExtra("ID");
         currentUser = social.getStringExtra("Current User");
 
+        //Firestore vars
+        socialRef = db.collection("users").document(currentUser).collection("socials").document(socialId);
 
 
         loadDataToView();
@@ -81,8 +85,6 @@ public class SocialActivity extends AppCompatActivity {
     }
     public void updateUsername(View v){
         String usernameToUpdate = mUsernameEditText.getText().toString();
-        DocumentReference socialRef = db.collection("users").document(currentUser).collection("socials").document(socialId);
-
         socialRef.update("username", usernameToUpdate)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -96,7 +98,34 @@ public class SocialActivity extends AppCompatActivity {
                         Log.w(TAG, "Error updating document", e);
                     }
                 });
+        Toast.makeText(SocialActivity.this, "Profile updated!", Toast.LENGTH_SHORT).show();
     }
-
+    public void deleteSocial(View v) {
+        new AlertDialog.Builder(this)
+                .setTitle("Warning")
+                .setMessage("Do you really want to delete " + platformName)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        socialRef
+                                .delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error deleting document", e);
+                                    }
+                                });
+                        Toast.makeText(SocialActivity.this, "Succesfully deleted", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null).show();
+    }
 
 }
