@@ -2,17 +2,21 @@ package com.maxaltena.socialkit;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,20 +35,21 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity {
-
-    // final vars
     public static final int RC_SIGN_IN = 1;
-    static final int REQUEST_COMPLETE_CODE = 69;  // The request code
+    public static final int REQUEST_COMPLETE_CODE = 69;
     public static final String TAG = "Saved";
 
-    //auth
+    // Firebase Authentication
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     public String loggedInUserUid;
 
-    //list vars
+    // List variables
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
@@ -53,39 +58,54 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<String, ArrayList<String>> completeHashmap = new HashMap<String, ArrayList<String>>();
     private ArrayList<String> platformData = new ArrayList<>();
 
-    //References
+    // References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference socialRef;
     final ArrayList<String> socialArray = new ArrayList<String>();
 
-
+    // Layout
+    private BottomNavigationView mMainNav;
+    private FrameLayout mMainFrame;
+    private ProfileFragment profileFragment;
+    private SearchFragment searchFragment;
+    private GroupFragment groupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //if rebooted the arrays were still there, thats why this method is called.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Toolbar
-        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("  SocialKit");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("  SocialKit");
         getSupportActionBar().setIcon(getDrawable(R.mipmap.socialkit_logo));
+
+        // Navigation
+        mMainNav = findViewById(R.id.navigation);
+        mMainFrame = findViewById(R.id.mainFrame);
+        profileFragment = new ProfileFragment();
+        searchFragment = new SearchFragment();
+        groupFragment = new GroupFragment();
+        setFragment(profileFragment);
+        mMainNav.setOnNavigationItemSelectedListener(navListener);
 
         // Initialize Firebase Components
         mFirebaseAuth = FirebaseAuth.getInstance();
-        //Reference and listeners
+        // Reference and listeners
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                //Get user
+                // Get user
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-                //Check if user is logged in
+                // Check if user is logged in
                 if(user!= null){
-                    //user is signed in
+                    // User is signed in
+
                     initAllPlatforms();
+
+                    // Do
+
                     loggedInUserUid = user.getUid();
-                    socialRef = db.collection("users").document(loggedInUserUid).collection("socials");
                 } else {
                     //user is not signed in
                     startActivityForResult(
@@ -100,7 +120,33 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
 
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            switch(menuItem.getItemId()){
+                case R.id.profile_menu:
+                    resetLoadedData();
+                    setFragment(profileFragment);
+                    initAllPlatforms();
+                    return true;
+                case R.id.search_menu:
+                    setFragment(searchFragment);
+                    return true;
+                case R.id.group_menu:
+                    setFragment(groupFragment);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    };
+
+    private void setFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.mainFrame, fragment);
+        fragmentTransaction.commit();
     }
 
     private void resetLoadedData() {
@@ -142,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 .orderBy("platform")
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 //Check if something went wrong
                 if (e !=  null){
                     Log.d(TAG, e.toString());
@@ -256,10 +302,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    //Replaces toolbar_menu with main_menu.xml
-    @Override
+    //Replaces toolbar_menu with top_menu.xml    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.top_menu, menu);
         return true;
     }
     @Override
