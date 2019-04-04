@@ -22,13 +22,10 @@ public class QrPopUp extends Activity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
-        getWindow().setLayout((int)(width*.8), (int)(height*.6));
+        getWindow().setLayout((int)(width*.6), (int)(height*.4));
 
-        imageView = (ImageView) this.findViewById(R.id.imageViewQr);
+        imageView = this.findViewById(R.id.imageViewQr);
         Bitmap bitmap = getIntent().getParcelableExtra("pic");
         imageView.setImageBitmap(bitmap);
-
-
     }
-
 }

@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -166,7 +167,10 @@ public class MainActivity extends AppCompatActivity {
                             DocumentSnapshot document = task.getResult();
                             Global.username = document.get("username").toString();
                             Global.name = document.get("name").toString();
-                            Log.d(TAG, "GLOBALS " + Global.username + " " + Global.name);
+                            TextView textViewUsername = findViewById(R.id.textViewUsersname);
+                            TextView textViewName = findViewById(R.id.textViewName);
+                            textViewUsername.setText(Global.username);
+                            textViewName.setText(Global.name);
                         } else {
                             Log.d(TAG, "get failed with ", task.getException());
                         }

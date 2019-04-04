@@ -7,78 +7,69 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraint_id"
             android:layout_width="match_parent"
-            android:layout_height="127dp"
-            android:orientation="horizontal">
+            android:layout_height="100dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textViewName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Name"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewQR"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewUsersname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:contentDescription="Link"
+                android:text="Username"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewQR"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewName" />
 
             <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="149dp"
-                android:layout_height="150dp"
-                android:contentDescription="profileImage"
-                tools:srcCompat="@mipmap/socialkit_logo" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/imageViewQR"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textViewName"
-                        android:layout_width="168dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="Name"
-                        android:textSize="24sp" />
-
-                    <ImageView
-                        android:id="@+id/imageView3"
-                        android:layout_width="10dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:contentDescription="Share icon  "
-                        app:srcCompat="@drawable/ic_share_black_24dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="77dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textViewUsersname"
-                        android:layout_width="168dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:contentDescription="Link"
-                        android:text="Username" />
-
-                    <ImageView
-                        android:id="@+id/imageViewQR"
-                        android:layout_width="10dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:contentDescription="Qr code "
-                        app:srcCompat="@drawable/qr" />
-                </LinearLayout>
-            </LinearLayout>
-
-        </LinearLayout>
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="32dp"
+                android:layout_weight="1"
+                android:contentDescription="Qr code "
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/qr" />
+        </android.support.constraint.ConstraintLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_below="@id/constraint_id" />
 
     </LinearLayout>
 
