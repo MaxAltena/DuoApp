@@ -202,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            if(Global.username != null){Global.username = document.get("username").toString();}
-                            if(Global.name != null){Global.name = document.get("name").toString();}
+                            Global.username = document.get("username").toString();
+                            Global.name = document.get("name").toString();
                             TextView textViewUsername = findViewById(R.id.textViewUsersname);
                             TextView textViewName = findViewById(R.id.textViewName);
                             textViewUsername.setText(Global.username);
