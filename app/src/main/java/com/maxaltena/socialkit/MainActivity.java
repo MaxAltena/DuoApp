@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     public String loggedInUserUid;
+    public String loggedInUserDisplayname;
 
     // List variables
     private ArrayList<String> mUsernames = new ArrayList<>();
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("  SocialKit");
         getSupportActionBar().setIcon(getDrawable(R.mipmap.socialkit_logo));
-
         // Navigation
         mMainNav = findViewById(R.id.navigation);
         mMainFrame = findViewById(R.id.mainFrame);
@@ -109,9 +109,11 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 // Get user
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+
                 // Check if user is logged in
                 if(user!= null){
                     // User is signed in
+                    loggedInUserDisplayname = user.getDisplayName();
                     loggedInUserUid = user.getUid();
 
 
@@ -134,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     });
 
 
+
                 } else {
                     // TODO: SignIn -> Maak nieuwe firestore document onder Users met zelfde structuur die er nu is.
                     //user is not signed in
@@ -153,12 +156,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void addUserToDB() {
         HashMap<String, Object> input = new HashMap<>();
-        input.put("name", "null");
-        input.put("username", "null");
+        input.put("name", loggedInUserDisplayname);
+        input.put("username", "Null");
+
         db.collection("users").document(loggedInUserUid).set(input).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "DocumentSnapshot successfully written!");
+
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -167,6 +172,14 @@ public class MainActivity extends AppCompatActivity {
                         Log.w(TAG, "Error writing document", e);
                     }
                 });;
+        createUsername();
+    }
+
+    private void createUsername() {
+        Intent intent = new Intent(this, AddUsername.class);
+        intent.putExtra("id", loggedInUserUid);
+        intent.putExtra("displayname", loggedInUserDisplayname);
+        startActivity(intent);
     }
 
     private void openQR() {
@@ -194,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getUserInfo(){
         // Get username and name with query
+        Log.d(TAG, "HHHHHHHHHHH" + loggedInUserDisplayname);
         db.collection("users")
                 .document(loggedInUserUid)
                 .get()
@@ -202,8 +216,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
+                            if (document.get("username").equals("null")){
+                                createUsername();
+                            }
+                            Log.d(TAG, "qqqqqqqqqqqqqqq" + document.get("username"));
                             Global.username = document.get("username").toString();
                             Global.name = document.get("name").toString();
+
                             TextView textViewUsername = findViewById(R.id.textViewUsersname);
                             TextView textViewName = findViewById(R.id.textViewName);
                             textViewUsername.setText(Global.username);
