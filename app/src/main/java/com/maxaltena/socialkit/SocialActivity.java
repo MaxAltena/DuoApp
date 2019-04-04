@@ -7,7 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,10 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
 
 public class SocialActivity extends AppCompatActivity {
     private static final String TAG = "SOCIALACTIVITY";
@@ -30,8 +36,6 @@ public class SocialActivity extends AppCompatActivity {
     private String socialId;
     private ImageView mImage;
     private DocumentReference socialRef;
-    private TextView mPlatformLinkTextView;
-    private TextView mPlatformnameTextView;
     private EditText mUsernameEditText;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -40,10 +44,13 @@ public class SocialActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_social);
 
-        //Declamre view vars
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+
+        //Declare view vars
         mUsernameEditText = (EditText)findViewById(R.id.editText);
-        mPlatformnameTextView  = (TextView)findViewById(R.id.textView2);
-        mPlatformLinkTextView  = (TextView)findViewById(R.id.textView3);
         mImage = (ImageView)findViewById(R.id.imageView);
 
         //Get intent vars
@@ -63,8 +70,7 @@ public class SocialActivity extends AppCompatActivity {
 
     private void loadDataToView(){
         mUsernameEditText.setText(username);
-        mPlatformnameTextView.setText(platformName);
-        mPlatformLinkTextView.setText(platformLink);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(platformName);
         Glide.with(this).load(platformImage).into(mImage);
     }
 
@@ -119,5 +125,33 @@ public class SocialActivity extends AppCompatActivity {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(platformLink+username));
         startActivity(i);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.top_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case R.id.camera_menu:
+                // Camera
+                startActivity(new Intent(this, CameraActivity.class));
+                return true;
+            case R.id.settings_menu:
+                // Settings
+                Toast.makeText(this, "Settings was clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.sign_out_menu:
+                // Sign out
+                AuthUI.getInstance().signOut(this);
+                return true;
+            default:
+                // Back
+                startActivity(new Intent(this, MainActivity.class));
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

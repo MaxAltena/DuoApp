@@ -82,31 +82,38 @@ public class UserActivity extends AppCompatActivity {
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
     }
+
     protected void getUID(){
         db.collection("users")
                 .whereEqualTo("username", Global.lookedUpUsername)
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        // Check if userID exists
-                        // TODO
-
                         //Check if something went wrong
                         if (e !=  null){
                             Log.d(TAG, e.toString());
                             return;
                         }
 
+                        boolean userExists = false;
+
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
                             DocumentSnapshot documentSnapshot = dc.getDocument();
+                            userExists = true;
                             String uid = documentSnapshot.getId();
                             Global.lookedUpName = documentSnapshot.get("name").toString();
                             Objects.requireNonNull(getSupportActionBar()).setTitle(Global.lookedUpName);
                             getSocials(uid);
                         }
+
+                        if(!userExists){
+                            startActivity(new Intent(UserActivity.this, MainActivity.class));
+                            Toast.makeText(UserActivity.this, "Username does not exist!", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
     }
+
     protected void getSocials(String uid) {
         db.collection("users")
                 .document(uid)
