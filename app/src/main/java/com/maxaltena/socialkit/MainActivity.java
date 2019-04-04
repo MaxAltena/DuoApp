@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -109,11 +111,28 @@ public class MainActivity extends AppCompatActivity {
                 // Check if user is logged in
                 if(user!= null){
                     // User is signed in
-
-                    initAllPlatforms();
-                    openQR();
                     loggedInUserUid = user.getUid();
-                    getUserInfo();
+
+
+                    db.collection("users").document(loggedInUserUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    initAllPlatforms();
+                                    openQR();
+                                    getUserInfo();
+                                } else {
+                                    addUserToDB();
+                                }
+                            } else {
+                                Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+
                 } else {
                     // TODO: SignIn -> Maak nieuwe firestore document onder Users met zelfde structuur die er nu is.
                     //user is not signed in
@@ -129,6 +148,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void addUserToDB() {
+        HashMap<String, Object> input = new HashMap<>();
+        input.put("name", "null");
+        input.put("username", "null");
+        db.collection("users").document(loggedInUserUid).set(input).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot successfully written!");
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });;
     }
 
     private void openQR() {
@@ -164,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            Global.username = document.get("username").toString();
-                            Global.name = document.get("name").toString();
+                            if(Global.username != null){Global.username = document.get("username").toString();}
+                            if(Global.name != null){Global.name = document.get("name").toString();}
                             Log.d(TAG, "GLOBALS " + Global.username + " " + Global.name);
                         } else {
                             Log.d(TAG, "get failed with ", task.getException());
