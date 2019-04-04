@@ -15,24 +15,13 @@
         layout="@layout/navigation"
         />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/navigation"
-        android:layout_marginBottom="92dp"
-        android:onClick="StartUserActivity"
-        android:text="Button" />
-
     <FrameLayout
         android:id="@+id/mainFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation"
         android:layout_below="@+id/toolbar"
-        >
-
-    </FrameLayout>
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"

@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     // Do
 
                     loggedInUserUid = user.getUid();
+                    getUserInfo();
                 } else {
                     //user is not signed in
                     startActivityForResult(
@@ -121,6 +122,26 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void getUserInfo(){
+        // Get username and name with query
+        db.collection("users")
+                .document(loggedInUserUid)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            Global.username = document.get("username").toString();
+                            Global.name = document.get("name").toString();
+                            Log.d(TAG, "GLOBALS " + Global.username + " " + Global.name);
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -182,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
     protected void getSocials() {
         db.collection("users")
                 .document(loggedInUserUid)
@@ -216,7 +236,6 @@ public class MainActivity extends AppCompatActivity {
                         case REMOVED:
                             removeSocial(oldIndex);
                             break;
-
                     }
                 }
             }
@@ -282,7 +301,6 @@ public class MainActivity extends AppCompatActivity {
         }
         completeHashmap.put(platformData.get(3), platformData);
         initRecyclerView();
-        Log.d(TAG, "YAAAA" + platformhashmap.toString());
     }
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView called");
@@ -335,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.camera_menu:
                 // Camera clicked
-                Toast.makeText(this, "Camera was activated", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, CameraActivity.class));
                 return true;
             case R.id.settings_menu:
                 // Settings clicked
@@ -354,15 +372,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddSocialsActivity.class);
         intent.putExtra("userUID", loggedInUserUid);
         startActivityForResult(intent, REQUEST_COMPLETE_CODE);
-    }
-    //Change view
-    public void StartAddPlatformActivity(View view) {
-        Intent intent = new Intent(this, AddPlatformActivity.class);
-        startActivity(intent);
-    }
-    //Change view
-    public void StartUserActivity(View view) {
-        Intent intent = new Intent(this, UserActivity.class);
-        startActivity(intent);
     }
 }

@@ -1,5 +1,6 @@
 package com.maxaltena.socialkit;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,6 @@ import java.util.HashMap;
 import javax.annotation.Nullable;
 
 public class UserActivity extends AppCompatActivity {
-
     private static final String TAG = "User Activity ";
 
     private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
@@ -34,7 +34,6 @@ public class UserActivity extends AppCompatActivity {
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
-    public String lookingUpUser;
     // References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -42,8 +41,6 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        //TODO Make dynamic
-        lookingUpUser = "MaxAltena";
         initAllPlatforms();
     }
 
@@ -75,7 +72,7 @@ public class UserActivity extends AppCompatActivity {
     }
     protected void getUID(){
         db.collection("users")
-                .whereEqualTo("username", lookingUpUser)
+                .whereEqualTo("username", Global.lookingUpUsername)
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -173,4 +170,12 @@ public class UserActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        startActivity(new Intent(UserActivity.this, MainActivity.class));
+        finish();
+
+    }
 }
