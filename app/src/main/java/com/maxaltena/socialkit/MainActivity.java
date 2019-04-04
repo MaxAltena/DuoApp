@@ -360,7 +360,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             return;
         }
-
         if(!socialArray.get(0).isEmpty()){
             mUsernames.add(socialArray.get(0));
         }else{
@@ -453,12 +452,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.sign_out_menu:
                 //Sign out
+                resetLoadedData();
                 AuthUI.getInstance().signOut(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
     //Change view
     public void StartAddSocialActivity(View view) {
         Intent intent = new Intent(this, AddSocialsActivity.class);
