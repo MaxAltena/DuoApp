@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -33,7 +34,7 @@ public class UserActivity extends AppCompatActivity {
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
-    private String lookedUpUser;
+    public String lookingUpUser;
     // References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -42,7 +43,7 @@ public class UserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         //TODO Make dynamic
-        lookedUpUser = "mudX2lxxQkXZCaObeqJQPIRgBWm1";
+        lookingUpUser = "MaxAltena";
         initAllPlatforms();
     }
 
@@ -65,16 +66,36 @@ public class UserActivity extends AppCompatActivity {
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                        getSocials();
+                        getUID();
                     }
                 });
     }
     private void MakeHashMap(ArrayList<String> array) {
         platformhashmap.put(array.get(0), array);
     }
-    protected void getSocials() {
+    protected void getUID(){
         db.collection("users")
-                .document(lookedUpUser)
+                .whereEqualTo("username", lookingUpUser)
+                .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        //Check if something went wrong
+                        if (e !=  null){
+                            Log.d(TAG, e.toString());
+                            return;
+                        }
+                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
+                            DocumentSnapshot documentSnapshot = dc.getDocument();
+                            Social social = documentSnapshot.toObject(Social.class);
+                            String uid = documentSnapshot.getId();
+                            getSocials(uid);
+                        }
+                    }
+                });
+    }
+    protected void getSocials(String uid) {
+        db.collection("users")
+                .document(uid)
                 .collection("socials")
                 .orderBy("platform")
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
@@ -89,6 +110,7 @@ public class UserActivity extends AppCompatActivity {
                             DocumentSnapshot documentSnapshot = dc.getDocument();
                             Social social = documentSnapshot.toObject(Social.class);
                             int oldIndex = dc.getOldIndex();
+                            documentSnapshot.getId();
                             final String platformPath = documentSnapshot.getDocumentReference("platform").getPath();
                             String[] platformPathParts = platformPath.split("/");
                             String platform = platformPathParts[1];
@@ -110,7 +132,6 @@ public class UserActivity extends AppCompatActivity {
                 });
     }
     private void initImageBitmaps(ArrayList<String> socialArray, String platform){
-        Log.d(TAG, "initImageBitmaps called");
         platformData.clear();
         if(platformhashmap.containsKey(platform)){
             platformData = platformhashmap.get(platform);
@@ -144,10 +165,8 @@ public class UserActivity extends AppCompatActivity {
             platformData.add("Platform name add error");
         }
         initRecyclerView();
-        Log.d(TAG, "YAAAA" + platformhashmap.toString());
     }
     private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView called");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         RecyclerViewAdapterUser adapter = new RecyclerViewAdapterUser(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
         recyclerView.setAdapter(adapter);
