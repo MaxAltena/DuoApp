@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -103,9 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     // User is signed in
 
                     initAllPlatforms();
-
-                    // Do
-
+                    openQR();
                     loggedInUserUid = user.getUid();
                     getUserInfo();
                 } else {
@@ -122,6 +121,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
+
+    private void openQR() {
+        ImageView imageViewQR = findViewById(R.id.imageViewQR);
+        imageViewQR.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startActivity(new Intent(MainActivity.this, QrPopUp.class));
+            }
+        });
     }
 
     private void getUserInfo(){
