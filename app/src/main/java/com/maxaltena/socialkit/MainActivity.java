@@ -174,10 +174,11 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                                 MakeHashMap(platformInfo);
                             }
+                            getSocials();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                        getSocials();
+
                     }
                 });
     }
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                         case ADDED:
                             socialArray.add(social.getUsername());
                             socialArray.add(documentSnapshot.getId());
+
                             initImageBitmaps(socialArray, platform);
                             break;
                         case MODIFIED:

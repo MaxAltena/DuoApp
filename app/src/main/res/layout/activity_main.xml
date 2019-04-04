@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar"
@@ -23,17 +24,13 @@
         android:layout_marginBottom="92dp"
         android:onClick="StartUserActivity"
         android:text="Button" />
-
     <FrameLayout
         android:id="@+id/mainFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/navigation"
         android:layout_below="@+id/toolbar"
-        >
-
-    </FrameLayout>
-
+        />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
@@ -50,5 +47,7 @@
         android:src="@drawable/add"
         android:elevation="4dp"
         />
+
+
 
 </RelativeLayout>
