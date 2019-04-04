@@ -1,6 +1,7 @@
 package com.maxaltena.socialkit;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -32,6 +33,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,9 +135,22 @@ public class MainActivity extends AppCompatActivity {
         imageViewQR.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                startActivity(new Intent(MainActivity.this, QrPopUp.class));
+                String text2Qr = Global.username;
+                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                try {
+                    BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,200,200);
+                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                    Intent intent = new Intent(MainActivity.this, QrPopUp.class);
+                    intent.putExtra("pic",bitmap);
+                    MainActivity.this.startActivity(intent);
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+
     }
 
     private void getUserInfo(){
