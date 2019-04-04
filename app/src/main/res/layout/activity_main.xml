@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar"
@@ -22,7 +21,6 @@
         android:layout_above="@+id/navigation"
         android:layout_below="@+id/toolbar"
         />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
@@ -39,7 +37,4 @@
         android:src="@drawable/add"
         android:elevation="4dp"
         />
-
-
-
 </RelativeLayout>

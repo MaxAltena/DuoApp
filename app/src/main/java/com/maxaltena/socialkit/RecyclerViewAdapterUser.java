@@ -14,19 +14,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class RecyclerViewAdapterUser extends RecyclerView.Adapter<RecyclerViewAdapterUser.ViewHolder> {
     private static final String TAG = "RecyclerViewAdapter";
-    private  final String PLATFORM_IMAGE = "Platform Image";
-    private  final String PLATFORM_NAME= "Platform Name";
-    private  final String LOGGED_IN_USER = "Current User";
-    private  final String USERNAME = "Username";
-    private  final String ID = "ID";
-    private  final String PLATFORM_LINKS = "Platform Link";
     private ArrayList<String> mUsernames = new ArrayList<>();
     private ArrayList<String> mImages = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
@@ -35,7 +27,7 @@ public class RecyclerViewAdapterUser extends RecyclerView.Adapter<RecyclerViewAd
     private Context mContext;
 
 
-    public RecyclerViewAdapterUser(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages, ArrayList<String> mPlatformNames, ArrayList<String> mPlatformLinks) {
+    public RecyclerViewAdapterUser(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages, ArrayList<String> mPlatformNames, ArrayList<String> mPlatformLinks){
         this.mUsernames = mUsernames;
         this.mImages = mImages;
         this.mContext = mContext;
@@ -45,14 +37,14 @@ public class RecyclerViewAdapterUser extends RecyclerView.Adapter<RecyclerViewAd
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position){
         Log.d(TAG, "onBindViewHolder: called");
 
         Glide.with(mContext)
@@ -78,11 +70,11 @@ public class RecyclerViewAdapterUser extends RecyclerView.Adapter<RecyclerViewAd
         return mUsernames.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView image;
         TextView username;
         RelativeLayout parentLayout;
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView){
             super(itemView);
             image = itemView.findViewById(R.id.image);
             username = itemView.findViewById(R.id.username);

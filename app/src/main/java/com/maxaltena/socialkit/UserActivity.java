@@ -6,8 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
@@ -15,12 +20,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -34,6 +39,7 @@ public class UserActivity extends AppCompatActivity {
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
+
     // References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -41,6 +47,12 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(Global.lookedUpName);
+
         initAllPlatforms();
     }
 
@@ -72,19 +84,24 @@ public class UserActivity extends AppCompatActivity {
     }
     protected void getUID(){
         db.collection("users")
-                .whereEqualTo("username", Global.lookingUpUsername)
+                .whereEqualTo("username", Global.lookedUpUsername)
                 .addSnapshotListener(this, new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        // Check if userID exists
+                        // TODO
+
                         //Check if something went wrong
                         if (e !=  null){
                             Log.d(TAG, e.toString());
                             return;
                         }
+
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
                             DocumentSnapshot documentSnapshot = dc.getDocument();
-                            Social social = documentSnapshot.toObject(Social.class);
                             String uid = documentSnapshot.getId();
+                            Global.lookedUpName = documentSnapshot.get("name").toString();
+                            Objects.requireNonNull(getSupportActionBar()).setTitle(Global.lookedUpName);
                             getSocials(uid);
                         }
                     }
@@ -106,8 +123,6 @@ public class UserActivity extends AppCompatActivity {
                         for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
                             DocumentSnapshot documentSnapshot = dc.getDocument();
                             Social social = documentSnapshot.toObject(Social.class);
-                            int oldIndex = dc.getOldIndex();
-                            documentSnapshot.getId();
                             final String platformPath = documentSnapshot.getDocumentReference("platform").getPath();
                             String[] platformPathParts = platformPath.split("/");
                             String platform = platformPathParts[1];
@@ -119,10 +134,8 @@ public class UserActivity extends AppCompatActivity {
                                     initImageBitmaps(socialArray, platform);
                                     break;
                                 case MODIFIED:
-                                    break;
                                 case REMOVED:
                                     break;
-
                             }
                         }
                     }
@@ -130,39 +143,44 @@ public class UserActivity extends AppCompatActivity {
     }
     private void initImageBitmaps(ArrayList<String> socialArray, String platform){
         platformData.clear();
+
         if(platformhashmap.containsKey(platform)){
             platformData = platformhashmap.get(platform);
-        }else{
-            return;
-        }
+        } else { return; }
 
         if(!socialArray.get(0).isEmpty()){
             mUsernames.add(socialArray.get(0));
-        }else{
+        } else {
             mUsernames.add("Username add error");
         }
+
         if(!platformData.get(1).isEmpty()){
             mImageUrls.add(platformData.get(1));
-        }else{
+        } else {
             mImageUrls.add("Image add error");
         }
+
         if(!platformData.get(2).isEmpty()){
             mPlatformLinks.add(platformData.get(2));
-        }else{
+        } else {
             mPlatformLinks.add("Platform link add error");
         }
+
         if(!platformData.get(3).isEmpty()){
             mPlatformNames.add(platformData.get(3));
-        }else{
+        } else {
             mPlatformNames.add("Platform name add error");
         }
+
         if(!socialArray.get(0).isEmpty()){
             platformData.add(socialArray.get(0));
-        }else{
+        } else {
             platformData.add("Platform name add error");
         }
+
         initRecyclerView();
     }
+
     private void initRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         RecyclerViewAdapterUser adapter = new RecyclerViewAdapterUser(this, mUsernames, mImageUrls, mPlatformNames, mPlatformLinks);
@@ -171,11 +189,37 @@ public class UserActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed(){
         super.onBackPressed();
         startActivity(new Intent(UserActivity.this, MainActivity.class));
         finish();
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.top_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case R.id.camera_menu:
+                // Camera
+                startActivity(new Intent(this, CameraActivity.class));
+                return true;
+            case R.id.settings_menu:
+                // Settings
+                Toast.makeText(this, "Settings was clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.sign_out_menu:
+                // Sign out
+                AuthUI.getInstance().signOut(this);
+                return true;
+            default:
+                // Back
+                startActivity(new Intent(this, MainActivity.class));
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

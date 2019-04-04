@@ -6,16 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -35,10 +31,9 @@ public class AddPlatformActivity extends AppCompatActivity {
 
     //db
     private DocumentReference mWriteDocRef;
-    private DocumentReference mReadPlatformsDocRef;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_platform);
         getPlatforms();
@@ -63,22 +58,17 @@ public class AddPlatformActivity extends AppCompatActivity {
                         }
                     }
                 });
-
     }
 
     public CollectionReference getReadDocRefence(){
-        CollectionReference readDocumentRef = FirebaseFirestore.getInstance().collection("platforms");
-        return readDocumentRef;
+        return FirebaseFirestore.getInstance().collection("platforms");
     }
 
     public DocumentReference setWriteDocumentReference(String name){
-        DocumentReference writeDocumentRef = FirebaseFirestore.getInstance().document("platforms/" + name);
-        return writeDocumentRef;
+        return FirebaseFirestore.getInstance().document("platforms/" + name);
     }
 
-
     public void saveNewPlatform(View view){
-
         EditText socialMediaLinkView = (EditText) findViewById(R.id.socialMediaLink);
         EditText socialMediaNameView = (EditText) findViewById(R.id.socialMediaName);
         EditText socialMediaImagelinkView = (EditText) findViewById(R.id.socialMediaImagelink);
@@ -98,7 +88,6 @@ public class AddPlatformActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Document probably saved to " + mWriteDocRef.getPath());
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -106,6 +95,5 @@ public class AddPlatformActivity extends AppCompatActivity {
                 Log.d(TAG, "Document saving failed", e);
             }
         });
-
     }
 }

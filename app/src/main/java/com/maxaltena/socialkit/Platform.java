@@ -24,8 +24,4 @@ public class Platform {
     public String getImage(){
         return image;
     }
-
-
-
 }
-

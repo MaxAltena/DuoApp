@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                     loggedInUserUid = user.getUid();
                     getUserInfo();
                 } else {
+                    // TODO: SignIn -> Maak nieuwe firestore document onder Users met zelfde structuur die er nu is.
                     //user is not signed in
                     startActivityForResult(
                             AuthUI.getInstance()

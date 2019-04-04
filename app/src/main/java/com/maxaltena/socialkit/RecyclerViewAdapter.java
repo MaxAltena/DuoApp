@@ -4,20 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
@@ -37,7 +34,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private Context mContext;
 
 
-    public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages,  ArrayList<String> mPlatformNames,  ArrayList<String> mPlatformLinks, ArrayList mIds) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<String> mUsernames, ArrayList<String> mImages,  ArrayList<String> mPlatformNames,  ArrayList<String> mPlatformLinks, ArrayList mIds){
         this.mUsernames = mUsernames;
         this.mImages = mImages;
         this.mContext = mContext;
@@ -48,16 +45,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType){
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        Log.d(TAG, "onBindViewHolder: called");
-
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position){
         Glide.with(mContext)
                 .asBitmap()
                 .load(mImages.get(position))
@@ -75,10 +70,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 socialIntent.putExtra(PLATFORM_LINKS, mPlatformLinks.get(position));
                 socialIntent.putExtra(ID, mIds.get(position));
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d(TAG, "onClick : Clicked on:" + user.getUid());
                 socialIntent.putExtra(LOGGED_IN_USER, user.getUid());
                 v.getContext().startActivity(socialIntent);
-                Log.d(TAG, "onClick : Clicked on:" + mUsernames.get(position));
             }
 
         });
@@ -90,12 +83,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         ImageView image;
         TextView username;
         RelativeLayout parentLayout;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView){
             super(itemView);
             image = itemView.findViewById(R.id.image);
             username = itemView.findViewById(R.id.username);

@@ -114,7 +114,7 @@ public class CameraActivity extends AppCompatActivity implements ZXingScannerVie
     @Override
     public void handleResult(Result result) {
         final String username = result.getText();
-        Global.lookingUpUsername = username;
+        Global.lookedUpUsername = username;
         startActivity(new Intent(this, UserActivity.class));
     }
 }
