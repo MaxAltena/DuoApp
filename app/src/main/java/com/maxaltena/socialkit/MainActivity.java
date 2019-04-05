@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     // User is signed in
                     loggedInUserDisplayname = user.getDisplayName();
                     loggedInUserUid = user.getUid();
-
+                    Global.UID = loggedInUserUid;
 
                     db.collection("users").document(loggedInUserUid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -138,8 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 } else {
-                    // TODO: SignIn -> Maak nieuwe firestore document onder Users met zelfde structuur die er nu is.
-                    //user is not signed in
+                    // User is not signed in
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
@@ -207,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void getUserInfo(){
         // Get username and name with query
-        Log.d(TAG, "HHHHHHHHHHH" + loggedInUserDisplayname);
         db.collection("users")
                 .document(loggedInUserUid)
                 .get()
@@ -448,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.settings_menu:
                 // Settings clicked
-                Toast.makeText(this, "Settings was clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.sign_out_menu:
                 //Sign out

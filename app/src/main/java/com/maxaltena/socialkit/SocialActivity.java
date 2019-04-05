@@ -48,7 +48,6 @@ public class SocialActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-
         //Declare view vars
         mUsernameEditText = (EditText)findViewById(R.id.editText);
         mImage = (ImageView)findViewById(R.id.imageView);
@@ -114,7 +113,7 @@ public class SocialActivity extends AppCompatActivity {
                                         Log.w(TAG, "Error deleting document", e);
                                     }
                                 });
-                        Toast.makeText(SocialActivity.this, "Succesfully deleted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SocialActivity.this, "Successfully deleted", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 })
@@ -142,7 +141,7 @@ public class SocialActivity extends AppCompatActivity {
                 return true;
             case R.id.settings_menu:
                 // Settings
-                Toast.makeText(this, "Settings was clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.sign_out_menu:
                 // Sign out

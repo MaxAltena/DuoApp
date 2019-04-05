@@ -217,7 +217,7 @@ public class UserActivity extends AppCompatActivity {
                 return true;
             case R.id.settings_menu:
                 // Settings
-                Toast.makeText(this, "Settings was clicked", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.sign_out_menu:
                 // Sign out
