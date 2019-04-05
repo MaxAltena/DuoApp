@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +26,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -67,17 +64,12 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> mPlatformNames = new ArrayList<>();
     private ArrayList<String> mPlatformLinks = new ArrayList<>();
     private ArrayList<String> mIds = new ArrayList<>();
-    private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<String, ArrayList<String>>();
-    private HashMap<String, ArrayList<String>> completeHashmap = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> platformhashmap = new HashMap<>();
     private ArrayList<String> platformData = new ArrayList<>();
 
     // References
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final ArrayList<String> socialArray = new ArrayList<String>();
-
-    // Layout
-    private BottomNavigationView mMainNav;
-    private FrameLayout mMainFrame;
+    final ArrayList<String> socialArray = new ArrayList<>();
     private ProfileFragment profileFragment;
     private SearchFragment searchFragment;
     private GroupFragment groupFragment;
@@ -93,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle("  SocialKit");
         getSupportActionBar().setIcon(getDrawable(R.mipmap.socialkit_logo));
         // Navigation
-        mMainNav = findViewById(R.id.navigation);
-        mMainFrame = findViewById(R.id.mainFrame);
+        // Layout
+        BottomNavigationView mMainNav = findViewById(R.id.navigation);
         profileFragment = new ProfileFragment();
         searchFragment = new SearchFragment();
         groupFragment = new GroupFragment();
@@ -122,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
+                                assert document != null;
                                 if (document.exists()) {
                                     initAllPlatforms();
                                     openQR();
@@ -170,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
                     }
-                });;
+                });
         createUsername();
     }
 
@@ -214,12 +207,12 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            if (document.get("username").equals("null")){
+                            assert document != null;
+                            if (Objects.equals(document.get("username"), "null")){
                                 createUsername();
                             }
-                            Log.d(TAG, "qqqqqqqqqqqqqqq" + document.get("username"));
-                            Global.username = document.get("username").toString();
-                            Global.name = document.get("name").toString();
+                            Global.username = Objects.requireNonNull(document.get("username")).toString();
+                            Global.name = Objects.requireNonNull(document.get("name")).toString();
 
                             TextView textViewUsername = findViewById(R.id.textViewUsersname);
                             TextView textViewName = findViewById(R.id.textViewName);
@@ -274,12 +267,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 ArrayList<String> platformInfo = new ArrayList<>();
-                                if(!document.getId().isEmpty()){platformInfo.add(document.getId()); }
-                                if(!document.get("image").toString().isEmpty()){ platformInfo.add(document.get("image").toString()); }
-                                if(!document.get("link").toString().isEmpty()){ platformInfo.add(document.get("link").toString()); }
-                                if(!document.get("name").toString().isEmpty()){ platformInfo.add(document.get("name").toString()); }
+                                platformInfo.add(document.getId());
+                                platformInfo.add(Objects.requireNonNull(document.get("image")).toString());
+                                platformInfo.add(Objects.requireNonNull(document.get("link")).toString());
+                                platformInfo.add(Objects.requireNonNull(document.get("name")).toString());
                                 Log.d(TAG, "Error getting documents: ", task.getException());
                                 MakeHashMap(platformInfo);
                             }
@@ -305,11 +298,12 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, e.toString());
                     return;
                 }
+                assert queryDocumentSnapshots != null;
                 for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
                     DocumentSnapshot documentSnapshot = dc.getDocument();
                     Social social = documentSnapshot.toObject(Social.class);
                     int oldIndex = dc.getOldIndex();
-                    final String platformPath = documentSnapshot.getDocumentReference("platform").getPath();
+                    final String platformPath = Objects.requireNonNull(documentSnapshot.getDocumentReference("platform")).getPath();
                     String[] platformPathParts = platformPath.split("/");
                     String platform = platformPathParts[1];
                     socialArray.clear();
@@ -388,7 +382,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             mIds.add("Platform Id add error");
         }
-        completeHashmap.put(platformData.get(3), platformData);
         initRecyclerView();
     }
     private void initRecyclerView(){
